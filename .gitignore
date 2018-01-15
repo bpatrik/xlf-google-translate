@@ -1,9 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea/
 config.json
-edited-test.xml
 node_modules/
-package-lock.json
 src/**/*.js
 src/**/*.js.map
 xlf-google-translate.iml

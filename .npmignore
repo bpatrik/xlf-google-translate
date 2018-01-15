@@ -1,0 +1,6 @@
+/src/config/Config.ts
+/src/index.ts
+node_modules/
+.idea/
+xlf-google-translate.iml
+.gitignore

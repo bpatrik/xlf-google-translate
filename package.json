@@ -1,10 +1,9 @@
 {
   "name": "xlf-google-translate",
   "version": "1.0.0-beta",
-  "private": true,
   "author": "Patrik J. Braun",
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node src/index.js"
   },
   "dependencies": {
     "google-translate-api": "2.3.0",
