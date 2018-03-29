@@ -5,3 +5,5 @@ node_modules/
 src/**/*.js
 src/**/*.js.map
 xlf-google-translate.iml
+cli.js
+cli.js.map

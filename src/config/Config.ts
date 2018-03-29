@@ -20,6 +20,13 @@ export class ConfigClass {
   public load() {
     ConfigLoader.loadBackendConfig(this,
       path.join(__dirname, './../../config.json'));
+    if (typeof this.destination.languages === 'string') {
+      try {
+        this.destination.languages = JSON.parse(this.destination.languages);
+      } catch (e) {
+        this.destination.languages = [this.destination.languages];
+      }
+    }
 
   }
 }
