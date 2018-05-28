@@ -4,7 +4,7 @@
   "author": "Patrik J. Braun",
   "scripts": {
     "start": "node src/index.js",
-    "test": "mocha ./test"
+    "test": "mocha --recursive test/"
   },
   "bin": {
     "xlf-google-translate": "./cli.js"
