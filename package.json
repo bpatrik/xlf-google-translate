@@ -4,6 +4,7 @@
   "author": "Patrik J. Braun",
   "scripts": {
     "start": "node src/index.js",
+    "pretest": "tsc",
     "test": "mocha --recursive test/"
   },
   "bin": {
