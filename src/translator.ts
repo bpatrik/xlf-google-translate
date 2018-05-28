@@ -1,21 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as xml2js from 'xml2js';
 import * as translate from 'google-translate-api';
 import {Config} from './config/Config';
-
-interface XLIFF {
-  xliff: {
-    file: {
-      body: {
-        'trans-unit': {
-          source: string[],
-          target: string[]
-        }[]
-      }
-    }[]
-  };
-}
+import {XLIFF} from './XLIFF';
+import {loadXml, writeXml} from './file';
 
 
 if (Config.source.file == null) {
@@ -36,45 +24,14 @@ if (Config.destination.folder == null) {
   process.exit();
 }
 
-const loadXml = async (file): Promise<XLIFF> => {
-  return new Promise<XLIFF>((resolve, reject) => {
-    fs.readFile(file, 'utf-8', (err, data) => {
-      if (err) {
-        return reject(err);
-      }
-      // we log out the readFile results
-      //  console.log(data);
-      // we then pass the data to our method here
-      xml2js.parseString(data, (error, result: XLIFF) => {
-        if (error) {
-          return reject(error);
-        }
-        resolve(result);
-      });
-    });
-  });
+export const sourceEqual = (a: string, b: string): boolean => {
+  const trim = (obj) => {
+    return obj.replace(new RegExp('\\s+', 'g'), ' ').trim();
+  };
+  return trim(a) === trim(b);
 };
 
-const writeXml = async (json: XLIFF, pathStr: string) => {
-  return new Promise((resolve, reject) => {
-
-    // create a new builder object and then convert
-    // our json back to xml.
-    const builder = new xml2js.Builder();
-    const xml = builder.buildObject(json);
-    fs.writeFile(pathStr, xml, (err) => {
-      if (err) {
-        console.error(err);
-        return reject(err);
-      }
-
-      resolve();
-      console.log('successfully written our update xml to file');
-    });
-  });
-};
-
-const translateJson = async (source: XLIFF, lang: string, base?: XLIFF) => {
+export const translateJson = async (source: XLIFF, lang: string, base?: XLIFF): Promise<XLIFF> => {
 
   console.log('translating: ' + lang + '..');
   const units: any[] = source.xliff.file[0].body[0]['trans-unit'];
@@ -89,9 +46,14 @@ const translateJson = async (source: XLIFF, lang: string, base?: XLIFF) => {
     for (let i = 0; i < units.length; i++) {
       if (baseUnits != null) {
         for (let j = 0; j < baseUnits.length; j++) {
-          if (JSON.stringify(baseUnits[j].source[0]) === JSON.stringify(units[i].source[0])
+          if (sourceEqual(baseUnits[j].source[0], units[i].source[0])
             && baseUnits[j].target && baseUnits[j].target.length > 0) {
-            units[i].target = baseUnits[j].target;
+
+            const copy = baseUnits[j].target;
+            if (copy[0] && Config.formatOutput === true) {
+              copy[0] = copy[0].replace(new RegExp('\\s+', 'g'), ' ').trim();
+            }
+            units[i].target = copy;
             skipped++;
             continue outer;
           }
@@ -119,6 +81,15 @@ const translateJson = async (source: XLIFF, lang: string, base?: XLIFF) => {
     console.log('skipped ' + skipped + ' translation(s), because already exist');
   }
   return source;
+};
+
+
+export const copySourceToTarget = (xliff: XLIFF) => {
+  const units: any[] = xliff.xliff.file[0].body[0]['trans-unit'];
+  for (let i = 0; i < units.length; i++) {
+    units[i].target = units[i].source;
+  }
+  return xliff;
 };
 
 

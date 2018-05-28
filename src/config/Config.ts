@@ -16,6 +16,7 @@ export class ConfigClass {
     filename: null
   };
   method: 'extend' | 'rewrite' = 'extend';
+  formatOutput = true;
 
   public load() {
     ConfigLoader.loadBackendConfig(this,

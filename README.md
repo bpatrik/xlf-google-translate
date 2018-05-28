@@ -1,5 +1,8 @@
 # xlf-google-translate
+[![Build Status](https://travis-ci.org/bpatrik/xlf-google-translate.svg?branch=master)](https://travis-ci.org/bpatrik/xlf-google-translate)
+
 It translates the Angular 2 i18n output with google translate
+
 
 ## Features
 It uses a `*.xlf` file as an input and translates the `source` tags of the xml with google translate and appends them to the xml as `target`.

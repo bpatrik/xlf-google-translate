@@ -1,9 +1,10 @@
-/src/config/Config.ts
-/src/index.ts
-/src/translator.ts
+src/config/Config.ts
+src/index.ts
+src/translator.ts
 cli.ts
 node_modules/
 .idea/
 xlf-google-translate.iml
 package-lock.json
 .gitignore
+test/
