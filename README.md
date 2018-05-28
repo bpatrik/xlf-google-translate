@@ -27,7 +27,9 @@ config example:
         "filename": "messages"
     },
     //if extend, it does not override the already trasnlated parts
-    "method": "extend"
+    "method": "extend",
+    //replaces all line breaks, whitespaces with a single space
+    "formatOutput": true
 }
 ```
 
