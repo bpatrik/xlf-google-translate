@@ -25,6 +25,9 @@ if (Config.destination.folder == null) {
 }
 
 export const sourceEqual = (a: string, b: string): boolean => {
+  if (typeof a !== 'string' || typeof b !== 'string') {
+    return false;
+  }
   const trim = (obj) => {
     return obj.replace(new RegExp('\\s+', 'g'), ' ').trim();
   };
