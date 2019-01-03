@@ -1,6 +1,4 @@
-src/config/Config.ts
-src/index.ts
-src/translator.ts
+src/**/*.ts
 cli.ts
 node_modules/
 .idea/

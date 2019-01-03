@@ -4,6 +4,11 @@ config.json
 node_modules/
 src/**/*.js
 src/**/*.js.map
+src/**/*.d.ts
+test/**/*.js
+test/**/*.js.map
+test/**/*.d.ts
 xlf-google-translate.iml
 cli.js
 cli.js.map
+cli.js.d.ts

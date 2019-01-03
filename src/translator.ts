@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as translate from 'google-translate-api';
+import * as translate from '@k3rn31p4nic/google-translate-api';
 import {Config} from './config/Config';
 import {XLIFF} from './XLIFF';
 import {loadXml, writeXml} from './file';
@@ -36,7 +36,7 @@ export const sourceEqual = (a: string, b: string): boolean => {
 
 export const translateJson = async (source: XLIFF, lang: string, base?: XLIFF): Promise<XLIFF> => {
 
-  console.log('translating: ' + lang + '..');
+  console.log('translating from: ' + Config.source.lang + ', to: ' + lang + '..');
   const units: any[] = source.xliff.file[0].body[0]['trans-unit'];
   let baseUnits: any[] = null;
   if (base && base.xliff && base.xliff.file[0]) {
@@ -45,6 +45,7 @@ export const translateJson = async (source: XLIFF, lang: string, base?: XLIFF): 
   }
 
   let skipped = 0;
+  let errored = 0;
   outer:
     for (let i = 0; i < units.length; i++) {
       if (baseUnits != null) {
@@ -75,13 +76,17 @@ export const translateJson = async (source: XLIFF, lang: string, base?: XLIFF): 
           units[i].target = units[i].source;
         }
       } catch (ex) {
-        console.warn('translating error', ex, units[i]);
+        errored++;
+        console.warn('Warning: translating error', ex, units[i]);
         units[i].target = units[i].source;
       }
     }
 
   if (skipped > 0) {
     console.log('skipped ' + skipped + ' translation(s), because already exist');
+  }
+  if (errored > 0) {
+    console.log('Warning: could not translate ' + errored + ' text, original text used instead');
   }
   return source;
 };

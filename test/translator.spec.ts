@@ -20,7 +20,6 @@ describe('translator', () => {
   });
 
   it('translateJson', async () => {
-
     const sourceSource = [''];
     const sourceBase = [''];
     const targetBase = [''];
@@ -75,8 +74,43 @@ describe('translator', () => {
     targetBase[0] = 'Out\ntest';
     expect('Out\ntest').to.eq((await translateJson(source, 'hu', base))
       .xliff.file[0].body[0]['trans-unit'][0].target[0]);
+  });
 
 
+  it('translate to hu', async () => {
+    const sourceSource = [''];
+    const sourceBase = [''];
+    const targetBase = [''];
+    const source: XLIFF = {
+      xliff: {
+        file: [{
+          body: [{
+            'trans-unit': [{
+              source: sourceSource,
+              target: ['']
+            }]
+          }]
+        }]
+      }
+    };
+    const base: XLIFF = {
+      xliff: {
+        file: [{
+          body: [{
+            'trans-unit': [{
+              source: sourceBase,
+              target: targetBase
+            }]
+          }]
+        }]
+      }
+    };
+
+    sourceSource[0] = 'apple';
+    sourceBase[0] = '';
+    targetBase[0] = 'alma';
+    expect(targetBase[0]).to.eq((await translateJson(source, 'hu', base))
+      .xliff.file[0].body[0]['trans-unit'][0].target[0]);
   });
 
 });
