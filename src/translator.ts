@@ -46,6 +46,7 @@ export const mergerTranslationJson = async (source: XLIFF, base: XLIFF): Promise
   }
 
   for (let i = 0; i < units.length; i++) {
+   units[i].target = units[i].source;
     if (baseUnits != null) {
       for (let j = 0; j < baseUnits.length; j++) {
         if (sourceEqual(baseUnits[j].source[0], units[i].source[0])

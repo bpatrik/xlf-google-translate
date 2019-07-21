@@ -4,7 +4,7 @@ export interface XLIFF {
       body: {
         'trans-unit': {
           source: string[],
-          target: string[]
+          target?: string[]
         }[]
       }[]
     }[]

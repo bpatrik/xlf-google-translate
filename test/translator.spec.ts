@@ -127,8 +127,7 @@ describe('translator', () => {
               source: sourceSource,
               target: ['']
             }, {
-              source: ['pear'],
-              target: ['pear']
+              source: ['pear']
             }]
           }]
         }]
@@ -156,6 +155,7 @@ describe('translator', () => {
     expect(source.xliff.file[0].body[0]['trans-unit'][1].target[0])
       .to.eq((await mergerTranslationJson(source, base))
       .xliff.file[0].body[0]['trans-unit'][1].target[0]);
+    console.log(JSON.stringify(await mergerTranslationJson(source, base)));
   });
 
 
