@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as xml2js from 'xml2js';
 import {XLIFF} from './XLIFF';
 
-export const loadXml = async (file): Promise<XLIFF> => {
+export const loadXml = async (file: string): Promise<XLIFF> => {
   return new Promise<XLIFF>((resolve, reject) => {
     fs.readFile(file, 'utf-8', (err, data) => {
       if (err) {

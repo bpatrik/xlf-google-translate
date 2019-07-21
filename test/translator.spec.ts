@@ -1,7 +1,8 @@
 import {expect} from 'chai';
-import {sourceEqual, translateJson} from '../src/translator';
+import {mergerTranslationJson, sourceEqual, translateJson} from '../src/translator';
 import {XLIFF} from '../src/XLIFF';
 import {Config} from '../src/config/Config';
+
 
 describe('translator', () => {
 
@@ -112,5 +113,50 @@ describe('translator', () => {
     expect(targetBase[0]).to.eq((await translateJson(source, 'hu', base))
       .xliff.file[0].body[0]['trans-unit'][0].target[0]);
   });
+
+
+  it('merge translations ', async () => {
+    const sourceSource = [''];
+    const sourceBase = [''];
+    const targetBase = [''];
+    const source: XLIFF = {
+      xliff: {
+        file: [{
+          body: [{
+            'trans-unit': [{
+              source: sourceSource,
+              target: ['']
+            }, {
+              source: ['pear'],
+              target: ['pear']
+            }]
+          }]
+        }]
+      }
+    };
+    const base: XLIFF = {
+      xliff: {
+        file: [{
+          body: [{
+            'trans-unit': [{
+              source: sourceBase,
+              target: targetBase
+            }]
+          }]
+        }]
+      }
+    };
+
+    sourceSource[0] = 'apple';
+    sourceBase[0] = 'apple';
+    targetBase[0] = 'alma';
+    expect(targetBase[0]).to.eq((await mergerTranslationJson(source, base))
+      .xliff.file[0].body[0]['trans-unit'][0].target[0]);
+
+    expect(source.xliff.file[0].body[0]['trans-unit'][1].target[0])
+      .to.eq((await mergerTranslationJson(source, base))
+      .xliff.file[0].body[0]['trans-unit'][1].target[0]);
+  });
+
 
 });

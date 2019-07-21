@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+// @ts-ignore
 import * as translate from '@k3rn31p4nic/google-translate-api';
 import {Config} from './config/Config';
 import {XLIFF} from './XLIFF';
@@ -28,10 +29,40 @@ export const sourceEqual = (a: string, b: string): boolean => {
   if (typeof a !== 'string' || typeof b !== 'string') {
     return false;
   }
-  const trim = (obj) => {
+  const trim = (obj: string) => {
     return obj.replace(new RegExp('\\s+', 'g'), ' ').trim();
   };
   return trim(a) === trim(b);
+};
+
+export const mergerTranslationJson = async (source: XLIFF, base: XLIFF): Promise<XLIFF> => {
+
+  console.log('merging translations');
+  const units: any[] = source.xliff.file[0].body[0]['trans-unit'];
+  let baseUnits: any[] = null;
+  if (base && base.xliff && base.xliff.file[0]) {
+    baseUnits = base.xliff.file[0].body[0]['trans-unit'];
+    console.log('extending previous translation');
+  }
+
+  for (let i = 0; i < units.length; i++) {
+    if (baseUnits != null) {
+      for (let j = 0; j < baseUnits.length; j++) {
+        if (sourceEqual(baseUnits[j].source[0], units[i].source[0])
+          && baseUnits[j].target && baseUnits[j].target.length > 0) {
+
+          const copy = baseUnits[j].target;
+          if (copy[0] && Config.formatOutput === true) {
+            copy[0] = copy[0].replace(new RegExp('\\s+', 'g'), ' ').trim();
+          }
+          units[i].target = copy;
+        }
+      }
+    }
+
+  }
+
+  return source;
 };
 
 export const translateJson = async (source: XLIFF, lang: string, base?: XLIFF): Promise<XLIFF> => {
@@ -111,11 +142,16 @@ export const run = async () => {
     for (let i = 0; i < Config.destination.languages.length; i++) {
       const outPath = path.resolve(Config.destination.folder, Config.destination.filename + '.' + Config.destination.languages[i] + '.xlf');
       let base;
-      if (fs.existsSync(outPath) === true && Config.method === 'extend') {
+      if (fs.existsSync(outPath) === true && (Config.method === 'extend' || Config.method === 'extend-only')) {
         base = await loadXml(outPath);
       }
 
-      const translated = await translateJson(source, Config.destination.languages[i], base);
+      let translated = source;
+      if (Config.method === 'extend-only') {
+        translated = await mergerTranslationJson(source, base);
+      } else {
+        translated = await translateJson(source, Config.destination.languages[i], base);
+      }
       await writeXml(translated, outPath);
 
     }

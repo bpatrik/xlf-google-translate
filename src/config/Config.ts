@@ -15,7 +15,7 @@ export class ConfigClass {
     languages: [],
     filename: null
   };
-  method: 'extend' | 'rewrite' = 'extend';
+  method: 'extend-only' | 'extend' | 'rewrite' = 'extend';
   formatOutput = true;
 
   public load() {
@@ -25,7 +25,7 @@ export class ConfigClass {
       try {
         this.destination.languages = JSON.parse(this.destination.languages);
       } catch (e) {
-        this.destination.languages = [this.destination.languages];
+        this.destination.languages = [<any>this.destination.languages];
       }
     }
 
