@@ -9,11 +9,12 @@ It uses a `*.xlf` file as an input and translates the `source` tags of the xml w
 It can extend existing translations. A good feature if new/additional text appear in the app. 
 
 ## Usage
-1) run the app once, it creates the `config.json`
-2) edit the config file and rerun
+1) Run `npm run pretest`
+2) Edit the `config.js` to match your requirements
+3) Run `npm run start` and your files will be created
 
 config example:
-```josn
+```json
 {
     //source data and it language
     "source": { 
