@@ -1,10 +1,11 @@
 {
   "name": "xlf-google-translate",
-  "version": "1.0.0-beta.15",
+  "version": "1.0.0-beta.16",
   "author": "Patrik J. Braun",
   "scripts": {
     "start": "node src/index.js",
-    "pretest": "tsc",
+    "build": "tsc",
+    "pretest": "npm run build",
     "test": "mocha --recursive test/"
   },
   "bin": {
