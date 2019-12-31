@@ -1,6 +1,9 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea/
 config.json
+index.js
+index.js.map
+index.js.d.ts
 node_modules/
 src/**/*.js
 src/**/*.js.map

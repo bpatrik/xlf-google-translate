@@ -7,3 +7,4 @@ xlf-google-translate.iml
 package-lock.json
 .gitignore
 test/
+index.ts
