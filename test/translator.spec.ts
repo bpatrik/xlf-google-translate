@@ -24,7 +24,7 @@ describe('translator', () => {
     const sourceSource = [''];
     const sourceBase = [''];
     const targetBase = [''];
-    const source: XLIFF = {
+    const source: XLIFF.Root = {
       xliff: {
         file: [{
           body: [{
@@ -36,7 +36,7 @@ describe('translator', () => {
         }]
       }
     };
-    const base: XLIFF = {
+    const base: XLIFF.Root = {
       xliff: {
         file: [{
           body: [{
@@ -82,7 +82,7 @@ describe('translator', () => {
     const sourceSource = [''];
     const sourceBase = [''];
     const targetBase = [''];
-    const source: XLIFF = {
+    const source: XLIFF.Root = {
       xliff: {
         file: [{
           body: [{
@@ -94,7 +94,7 @@ describe('translator', () => {
         }]
       }
     };
-    const base: XLIFF = {
+    const base: XLIFF.Root = {
       xliff: {
         file: [{
           body: [{
@@ -119,7 +119,7 @@ describe('translator', () => {
     const sourceSource = [''];
     const sourceBase = [''];
     const targetBase = [''];
-    const source: XLIFF = {
+    const source: XLIFF.Root = {
       xliff: {
         file: [{
           body: [{
@@ -133,7 +133,7 @@ describe('translator', () => {
         }]
       }
     };
-    const base: XLIFF = {
+    const base: XLIFF.Root = {
       xliff: {
         file: [{
           body: [{

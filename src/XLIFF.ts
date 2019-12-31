@@ -17,11 +17,11 @@ export module XLIFF {
       file: {
         body: {
           'trans-unit': {
-            '$': {
+            '$'?: {
               id: string,
               datatype: 'html'
             }
-            'context-group': ContextGroup[]
+            'context-group'?: ContextGroup[]
             source: string[],
             target?: string[]
           }[]

@@ -14,4 +14,4 @@ test/**/*.d.ts
 xlf-google-translate.iml
 cli.js
 cli.js.map
-cli.js.d.ts
+cli.d.ts
