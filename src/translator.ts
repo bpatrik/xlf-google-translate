@@ -35,7 +35,7 @@ export const sourceEqual = (a: string, b: string): boolean => {
   return trim(a) === trim(b);
 };
 
-export const mergerTranslationJson = async (source: XLIFF, base: XLIFF): Promise<XLIFF> => {
+export const mergerTranslationJson = async (source: XLIFF.Root, base: XLIFF.Root): Promise<XLIFF.Root> => {
 
   console.log('merging translations');
   const units: any[] = source.xliff.file[0].body[0]['trans-unit'];
@@ -66,7 +66,7 @@ export const mergerTranslationJson = async (source: XLIFF, base: XLIFF): Promise
   return source;
 };
 
-export const translateJson = async (source: XLIFF, lang: string, base?: XLIFF): Promise<XLIFF> => {
+export const translateJson = async (source: XLIFF.Root, lang: string, base?: XLIFF.Root): Promise<XLIFF.Root> => {
 
   console.log('translating from: ' + Config.source.lang + ', to: ' + lang + '..');
   const units: any[] = source.xliff.file[0].body[0]['trans-unit'];
@@ -124,7 +124,7 @@ export const translateJson = async (source: XLIFF, lang: string, base?: XLIFF): 
 };
 
 
-export const copySourceToTarget = (xliff: XLIFF) => {
+export const copySourceToTarget = (xliff: XLIFF.Root) => {
   const units: any[] = xliff.xliff.file[0].body[0]['trans-unit'];
   for (let i = 0; i < units.length; i++) {
     units[i].target = units[i].source;

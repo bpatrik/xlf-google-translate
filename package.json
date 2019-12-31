@@ -1,6 +1,6 @@
 {
   "name": "xlf-google-translate",
-  "version": "1.0.0-beta.18",
+  "version": "1.0.0-beta.19",
   "author": "Patrik J. Braun",
   "scripts": {
     "start": "node src/index.js",
@@ -12,20 +12,20 @@
     "xlf-google-translate": "./cli.js"
   },
   "dependencies": {
-    "@k3rn31p4nic/google-translate-api": "1.0.6",
-    "typeconfig": "1.0.7",
+    "@k3rn31p4nic/google-translate-api": "1.1.0",
+    "typeconfig": "1.0.9",
     "xml2js": "0.4.23"
   },
   "devDependencies": {
-    "@types/chai": "4.1.7",
+    "@types/chai": "4.2.7",
     "@types/mocha": "5.2.7",
-    "@types/node": "12.6.8",
+    "@types/node": "13.1.2",
     "@types/xml2js": "0.4.5",
     "chai": "4.2.0",
-    "mocha": "6.2.0",
-    "ts-node": "8.3.0",
-    "tslint": "5.18.0",
-    "tslint-consistent-codestyle": "1.15.1",
-    "typescript": "3.5.3"
+    "mocha": "6.2.2",
+    "ts-node": "8.5.4",
+    "tslint": "5.20.1",
+    "tslint-consistent-codestyle": "1.16.0",
+    "typescript": "3.7.4"
   }
 }
