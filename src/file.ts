@@ -3,6 +3,7 @@ import * as xml2js from 'xml2js';
 import {XLIFF} from './XLIFF';
 
 export const loadXml = async (file: string): Promise<XLIFF.Root> => {
+  console.log('Reading: ' + file);
   const data: string = await fsp.readFile(file, 'utf-8');
   return await xml2js.parseStringPromise(data);
 };

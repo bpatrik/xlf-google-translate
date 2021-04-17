@@ -7,23 +7,6 @@ import {XLIFF} from './XLIFF';
 import {loadXml, writeXml} from './file';
 
 
-if (Config.source.file == null) {
-  console.log('source.file is not set');
-  process.exit();
-}
-if (Config.source.lang == null) {
-  console.log('source.lang is not set');
-  process.exit();
-}
-if (Config.destination.languages == null) {
-  console.log('destination.languages is not set');
-  process.exit();
-}
-
-if (Config.destination.folder == null) {
-  console.log('destination.folder is not set');
-  process.exit();
-}
 
 export const sourceEqual = (a: string, b: string): boolean => {
   if (typeof a !== 'string' || typeof b !== 'string') {
@@ -33,6 +16,15 @@ export const sourceEqual = (a: string, b: string): boolean => {
     return obj.replace(new RegExp('\\s+', 'g'), ' ').trim();
   };
   return trim(a) === trim(b);
+};
+
+const trimTarget = (target: any): any => {
+  if (target[0] && typeof target[0] === 'string') {
+    target[0] = target[0].replace(new RegExp('\\s+', 'g'), ' ').trim();
+  } else if (typeof target[0] === 'object' && typeof target[0]._ === 'string') {
+    target[0]._ = target[0]._.replace(new RegExp('\\s+', 'g'), ' ').trim();
+  }
+  return target;
 };
 
 export const mergerTranslationJson = async (source: XLIFF.Root, base: XLIFF.Root): Promise<XLIFF.Root> => {
@@ -46,17 +38,16 @@ export const mergerTranslationJson = async (source: XLIFF.Root, base: XLIFF.Root
   }
 
   for (let i = 0; i < units.length; i++) {
-   units[i].target = units[i].source;
+    units[i].target = units[i].source;
     if (baseUnits != null) {
       for (let j = 0; j < baseUnits.length; j++) {
         if (sourceEqual(baseUnits[j].source[0], units[i].source[0])
           && baseUnits[j].target && baseUnits[j].target.length > 0) {
 
-          const copy = baseUnits[j].target;
-          if (copy[0] && Config.formatOutput === true) {
-            copy[0] = copy[0].replace(new RegExp('\\s+', 'g'), ' ').trim();
+          units[i].target = baseUnits[j].target;
+          if (Config.formatOutput === true) {
+            units[i].target = trimTarget(units[i].target);
           }
-          units[i].target = copy;
         }
       }
     }
@@ -85,11 +76,11 @@ export const translateJson = async (source: XLIFF.Root, lang: string, base?: XLI
           if (sourceEqual(baseUnits[j].source[0], units[i].source[0])
             && baseUnits[j].target && baseUnits[j].target.length > 0) {
 
-            const copy = baseUnits[j].target;
-            if (copy[0] && Config.formatOutput === true) {
-              copy[0] = copy[0].replace(new RegExp('\\s+', 'g'), ' ').trim();
+
+            units[i].target = baseUnits[j].target;
+            if (Config.formatOutput === true) {
+              units[i].target = trimTarget(units[i].target);
             }
-            units[i].target = copy;
             skipped++;
             continue outer;
           }

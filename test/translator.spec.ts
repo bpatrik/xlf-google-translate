@@ -1,3 +1,4 @@
+/* tslint:disable:no-unused-expression */
 import {expect} from 'chai';
 import {mergerTranslationJson, sourceEqual, translateJson} from '../src/translator';
 import {XLIFF} from '../src/XLIFF';

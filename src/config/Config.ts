@@ -1,36 +1,57 @@
+import 'reflect-metadata';
 import * as path from 'path';
-import {ConfigLoader} from 'typeconfig';
+import {ConfigClass, ConfigClassBuilder} from 'typeconfig/node';
+import {ConfigProperty} from 'typeconfig/common';
 
 /**
  * This configuration will be only at backend
  */
-export class ConfigClass {
+@ConfigClass({
+  configPath: path.join(__dirname, './../../config.json'),
+  saveIfNotExist: true,
+  attachDescription: true,
+  enumsAsString: true,
+  softReadonly: true,
+  cli: {
+    enable: {
+      configPath: true,
+      attachState: true,
+      attachDescription: true,
+      rewriteCLIConfig: true,
+      rewriteENVConfig: true,
+      enumsAsString: true,
+      saveIfNotExist: true,
+      exitOnConfig: true
+    },
+    defaults: {
+      enabled: true
+    }
+  }
+})
+export class ConfigBuilder {
 
+  @ConfigProperty()
   source: { lang: string, file: string } = {
     lang: null,
     file: null
   };
+
+  @ConfigProperty()
   destination: { folder: string, filename: string, languages: string[] } = {
     folder: null,
     languages: [],
     filename: null
   };
+
+  @ConfigProperty({type: 'string'})
   method: 'extend-only' | 'extend' | 'rewrite' = 'extend';
+
+  @ConfigProperty({type: 'boolean'})
   formatOutput = true;
 
-  public load() {
-    ConfigLoader.loadBackendConfig(this,
-      path.join(__dirname, './../../config.json'));
-    if (typeof this.destination.languages === 'string') {
-      try {
-        this.destination.languages = JSON.parse(this.destination.languages);
-      } catch (e) {
-        this.destination.languages = [<any>this.destination.languages];
-      }
-    }
 
-  }
 }
 
-export let Config = new ConfigClass();
-Config.load();
+
+export const Config = ConfigClassBuilder.attachInterface(new ConfigBuilder());
+Config.loadSync();
