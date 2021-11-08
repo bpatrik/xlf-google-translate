@@ -1,3 +1,4 @@
+# Deprecated, not supporting translation anymore since v1.0.0-beta.22
 # xlf-google-translate
 [![Build Status](https://travis-ci.org/bpatrik/xlf-google-translate.svg?branch=master)](https://travis-ci.org/bpatrik/xlf-google-translate)
 

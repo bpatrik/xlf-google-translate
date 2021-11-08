@@ -1,7 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-// @ts-ignore
-import * as translate from '@k3rn31p4nic/google-translate-api';
 import {Config} from './config/Config';
 import {XLIFF} from './XLIFF';
 import {loadXml, writeXml} from './file';
@@ -57,6 +55,10 @@ export const mergerTranslationJson = async (source: XLIFF.Root, base: XLIFF.Root
   return source;
 };
 
+/**
+ * @deprecated since version 1.0.0-beta.22
+ */
+
 export const translateJson = async (source: XLIFF.Root, lang: string, base?: XLIFF.Root): Promise<XLIFF.Root> => {
 
   console.log('translating from: ' + Config.source.lang + ', to: ' + lang + '..');
@@ -92,7 +94,7 @@ export const translateJson = async (source: XLIFF.Root, lang: string, base?: XLI
       }
       console.log(i + '/' + units.length, units[i].source[0]);
       try {
-        const result = await translate(units[i].source[0], {from: Config.source.lang, to: lang});
+        const result = units[i].source[0];
         if (result.text !== '') {
           units[i].target = [result.text];
         } else {
