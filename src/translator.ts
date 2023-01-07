@@ -5,10 +5,16 @@ import {XLIFF} from './XLIFF';
 import {loadXml, writeXml} from './file';
 
 
-
-export const sourceEqual = (a: string, b: string): boolean => {
+export const sourceEqual = (a: string, b: string, disregardDots = false): boolean => {
   if (typeof a !== 'string' || typeof b !== 'string') {
     return false;
+  }
+  if (disregardDots) {
+    if (a.endsWith('.') && !b.endsWith('.')) {
+      a = a + '.';
+    } else if (!a.endsWith('.') && b.endsWith('.')) {
+      b = b + '.';
+    }
   }
   const trim = (obj: string) => {
     return obj.replace(new RegExp('\\s+', 'g'), ' ').trim();
@@ -16,11 +22,18 @@ export const sourceEqual = (a: string, b: string): boolean => {
   return trim(a) === trim(b);
 };
 
-const trimTarget = (target: any): any => {
+const trimTarget = (target: any, source: string): any => {
+  const hasDot = typeof source === 'string' && source.endsWith('.');
   if (target[0] && typeof target[0] === 'string') {
     target[0] = target[0].replace(new RegExp('\\s+', 'g'), ' ').trim();
+    if (hasDot && !target[0].endsWith('.')) {
+      target[0] += '.';
+    }
   } else if (typeof target[0] === 'object' && typeof target[0]._ === 'string') {
     target[0]._ = target[0]._.replace(new RegExp('\\s+', 'g'), ' ').trim();
+    if (hasDot && !target[0]._.endsWith('.')) {
+      target[0]._ += '.';
+    }
   }
   return target;
 };
@@ -39,12 +52,12 @@ export const mergerTranslationJson = async (source: XLIFF.Root, base: XLIFF.Root
     units[i].target = units[i].source;
     if (baseUnits != null) {
       for (let j = 0; j < baseUnits.length; j++) {
-        if (sourceEqual(baseUnits[j].source[0], units[i].source[0])
+        if (sourceEqual(baseUnits[j].source[0], units[i].source[0], Config.formatOutput)
           && baseUnits[j].target && baseUnits[j].target.length > 0) {
 
           units[i].target = baseUnits[j].target;
           if (Config.formatOutput === true) {
-            units[i].target = trimTarget(units[i].target);
+            units[i].target = trimTarget(units[i].target, units[i].source[0]);
           }
         }
       }
@@ -75,13 +88,13 @@ export const translateJson = async (source: XLIFF.Root, lang: string, base?: XLI
     for (let i = 0; i < units.length; i++) {
       if (baseUnits != null) {
         for (let j = 0; j < baseUnits.length; j++) {
-          if (sourceEqual(baseUnits[j].source[0], units[i].source[0])
+          if (sourceEqual(baseUnits[j].source[0], units[i].source[0], Config.formatOutput)
             && baseUnits[j].target && baseUnits[j].target.length > 0) {
 
 
             units[i].target = baseUnits[j].target;
             if (Config.formatOutput === true) {
-              units[i].target = trimTarget(units[i].target);
+              units[i].target = trimTarget(units[i].target, units[i].source[0]);
             }
             skipped++;
             continue outer;
