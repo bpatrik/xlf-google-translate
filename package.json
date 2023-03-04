@@ -12,7 +12,7 @@
     "xlf-google-translate": "./cli.js"
   },
   "dependencies": {
-    "typeconfig": "2.0.19",
+    "typeconfig": "2.0.37",
     "xml2js": "0.4.23"
   },
   "devDependencies": {
