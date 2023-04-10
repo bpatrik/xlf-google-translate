@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "typeconfig": "2.0.19",
-    "xml2js": "0.4.23"
+    "xml2js": "0.5.0"
   },
   "devDependencies": {
     "@types/chai": "4.2.22",
