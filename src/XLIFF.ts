@@ -1,4 +1,5 @@
-export module XLIFF {
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace XLIFF {
   export interface ContextGroup {
     'context': {
       '_': string,

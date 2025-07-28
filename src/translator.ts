@@ -4,6 +4,7 @@ import {Config} from './config/Config';
 import {XLIFF} from './XLIFF';
 import {loadXml, writeXml} from './file';
 
+type TargetType = [string | { _: string, text: string }] | string;
 
 export const sourceEqual = (a: string, b: string, disregardDots = false): boolean => {
   if (typeof a !== 'string' || typeof b !== 'string') {
@@ -22,14 +23,14 @@ export const sourceEqual = (a: string, b: string, disregardDots = false): boolea
   return trim(a) === trim(b);
 };
 
-const trimTarget = (target: any, source: string): any => {
+const trimTarget = (target: TargetType, source: string): TargetType => {
   const hasDot = typeof source === 'string' && source.endsWith('.');
-  if (target[0] && typeof target[0] === 'string') {
+  if (Array.isArray(target) && target[0] && typeof target[0] === 'string') {
     target[0] = target[0].replace(new RegExp('\\s+', 'g'), ' ').trim();
     if (hasDot && !target[0].endsWith('.')) {
       target[0] += '.';
     }
-  } else if (typeof target[0] === 'object' && typeof target[0]._ === 'string') {
+  } else if (Array.isArray(target) && typeof target[0] === 'object' && typeof target[0]._ === 'string') {
     target[0]._ = target[0]._.replace(new RegExp('\\s+', 'g'), ' ').trim();
     if (hasDot && !target[0]._.endsWith('.')) {
       target[0]._ += '.';
@@ -41,23 +42,27 @@ const trimTarget = (target: any, source: string): any => {
 export const mergerTranslationJson = async (source: XLIFF.Root, base: XLIFF.Root): Promise<XLIFF.Root> => {
 
   console.log('merging translations');
-  const units: any[] = source.xliff.file[0].body[0]['trans-unit'];
-  let baseUnits: any[] = null;
+  const units: { target: TargetType, source: TargetType }[] = source.xliff.file[0].body[0]['trans-unit'] as unknown as {
+    target: TargetType,
+    source: TargetType
+  }[];
+  let baseUnits: { target: TargetType, source: TargetType }[] = null;
   if (base && base.xliff && base.xliff.file[0]) {
-    baseUnits = base.xliff.file[0].body[0]['trans-unit'];
+    baseUnits = base.xliff.file[0].body[0]['trans-unit'] as { target: TargetType, source: TargetType }[];
     console.log('extending previous translation');
   }
+
 
   for (let i = 0; i < units.length; i++) {
     units[i].target = units[i].source;
     if (baseUnits != null) {
       for (let j = 0; j < baseUnits.length; j++) {
-        if (sourceEqual(baseUnits[j].source[0], units[i].source[0], Config.formatOutput)
+        if (sourceEqual(baseUnits[j].source[0] as string, units[i].source[0] as string, Config.formatOutput)
           && baseUnits[j].target && baseUnits[j].target.length > 0) {
 
           units[i].target = baseUnits[j].target;
           if (Config.formatOutput === true) {
-            units[i].target = trimTarget(units[i].target, units[i].source[0]);
+            units[i].target = trimTarget(units[i].target, units[i].source[0] as string) as string;
           }
         }
       }
@@ -75,10 +80,13 @@ export const mergerTranslationJson = async (source: XLIFF.Root, base: XLIFF.Root
 export const translateJson = async (source: XLIFF.Root, lang: string, base?: XLIFF.Root): Promise<XLIFF.Root> => {
 
   console.log('translating from: ' + Config.source.lang + ', to: ' + lang + '..');
-  const units: any[] = source.xliff.file[0].body[0]['trans-unit'];
-  let baseUnits: any[] = null;
+  const units: { target: TargetType, source: TargetType }[] = source.xliff.file[0].body[0]['trans-unit'] as unknown as {
+    target: TargetType,
+    source: TargetType
+  }[];
+  let baseUnits: { target: TargetType, source: TargetType }[] = null;
   if (base && base.xliff && base.xliff.file[0]) {
-    baseUnits = base.xliff.file[0].body[0]['trans-unit'];
+    baseUnits = base.xliff.file[0].body[0]['trans-unit'] as unknown as { target: TargetType, source: TargetType }[];
     console.log('extending previous translation');
   }
 
@@ -88,13 +96,13 @@ export const translateJson = async (source: XLIFF.Root, lang: string, base?: XLI
     for (let i = 0; i < units.length; i++) {
       if (baseUnits != null) {
         for (let j = 0; j < baseUnits.length; j++) {
-          if (sourceEqual(baseUnits[j].source[0], units[i].source[0], Config.formatOutput)
+          if (sourceEqual(baseUnits[j].source[0] as string, units[i].source[0] as string, Config.formatOutput)
             && baseUnits[j].target && baseUnits[j].target.length > 0) {
 
 
             units[i].target = baseUnits[j].target;
             if (Config.formatOutput === true) {
-              units[i].target = trimTarget(units[i].target, units[i].source[0]);
+              units[i].target = trimTarget(units[i].target, units[i].source[0] as string);
             }
             skipped++;
             continue outer;
@@ -107,7 +115,7 @@ export const translateJson = async (source: XLIFF.Root, lang: string, base?: XLI
       }
       console.log(i + '/' + units.length, units[i].source[0]);
       try {
-        const result = units[i].source[0];
+        const result = units[i].source[0] as { text: string };
         if (result.text !== '') {
           units[i].target = [result.text];
         } else {
@@ -131,7 +139,10 @@ export const translateJson = async (source: XLIFF.Root, lang: string, base?: XLI
 
 
 export const copySourceToTarget = (xliff: XLIFF.Root) => {
-  const units: any[] = xliff.xliff.file[0].body[0]['trans-unit'];
+  const units: { target: unknown, source: unknown }[] = xliff.xliff.file[0].body[0]['trans-unit'] as unknown as {
+    target: unknown,
+    source: unknown
+  }[];
   for (let i = 0; i < units.length; i++) {
     units[i].target = units[i].source;
   }
