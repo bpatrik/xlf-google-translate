@@ -6,6 +6,10 @@ import {loadXml, writeXml} from './file';
 
 type TargetType = [string | { _: string, text: string }] | string;
 
+// A single XLIFF trans-unit with required source and optional target
+interface TransUnit { target?: TargetType; source: TargetType }
+
+// Utilities
 export const sourceEqual = (a: string, b: string, disregardDots = false): boolean => {
   if (typeof a !== 'string' || typeof b !== 'string') {
     return false;
@@ -17,12 +21,30 @@ export const sourceEqual = (a: string, b: string, disregardDots = false): boolea
       b = b + '.';
     }
   }
-  const trim = (obj: string) => {
-    return obj.replace(new RegExp('\\s+', 'g'), ' ').trim();
-  };
+  const trim = (obj: string) => obj.replace(new RegExp('\\s+', 'g'), ' ').trim();
   return trim(a) === trim(b);
 };
 
+// Returns the list of trans-units from an XLIFF root
+const getTransUnits = (root: XLIFF.Root): TransUnit[] => {
+  return root.xliff.file[0].body[0]['trans-unit'] as unknown as TransUnit[];
+};
+
+// Get the first text (string) value from a TargetType (either direct or object form)
+const getFirstText = (value: TargetType | undefined): string | undefined => {
+  if (!value) return undefined;
+  if (Array.isArray(value) && value.length > 0) {
+    const first = value[0];
+    if (typeof first === 'string') return first as string;
+    if (first && typeof first._ === 'string') return first._ as string;
+  }
+  return undefined;
+};
+
+// Does the unit have any target content
+const hasTarget = (u: TransUnit): boolean => Array.isArray(u.target) && u.target.length > 0;
+
+// Normalize/trim target content and optionally enforce trailing dot based on the source
 const trimTarget = (target: TargetType, source: string): TargetType => {
   const hasDot = typeof source === 'string' && source.endsWith('.');
   if (Array.isArray(target) && target[0] && typeof target[0] === 'string') {
@@ -30,44 +52,45 @@ const trimTarget = (target: TargetType, source: string): TargetType => {
     if (hasDot && !target[0].endsWith('.')) {
       target[0] += '.';
     }
-  } else if (Array.isArray(target) && typeof target[0] === 'object' && typeof target[0]._ === 'string') {
-    target[0]._ = target[0]._.replace(new RegExp('\\s+', 'g'), ' ').trim();
-    if (hasDot && !target[0]._.endsWith('.')) {
-      target[0]._ += '.';
+  } else if (Array.isArray(target) && typeof target[0] === 'object' && typeof (target[0])._ === 'string') {
+    (target[0])._ = (target[0])._.replace(new RegExp('\\s+', 'g'), ' ').trim();
+    if (hasDot && !((target[0])._ as string).endsWith('.')) {
+      (target[0])._ += '.';
     }
   }
   return target;
 };
 
 export const mergerTranslationJson = async (source: XLIFF.Root, base: XLIFF.Root): Promise<XLIFF.Root> => {
-
   console.log('merging translations');
-  const units: { target: TargetType, source: TargetType }[] = source.xliff.file[0].body[0]['trans-unit'] as unknown as {
-    target: TargetType,
-    source: TargetType
-  }[];
-  let baseUnits: { target: TargetType, source: TargetType }[] = null;
+
+  const units = getTransUnits(source);
+  let baseUnits: TransUnit[] | null = null;
   if (base && base.xliff && base.xliff.file[0]) {
-    baseUnits = base.xliff.file[0].body[0]['trans-unit'] as { target: TargetType, source: TargetType }[];
+    baseUnits = getTransUnits(base);
     console.log('extending previous translation');
   }
 
-
   for (let i = 0; i < units.length; i++) {
+    // default: copy source to target
     units[i].target = units[i].source;
-    if (baseUnits != null) {
-      for (let j = 0; j < baseUnits.length; j++) {
-        if (sourceEqual(baseUnits[j].source[0] as string, units[i].source[0] as string, Config.formatOutput)
-          && baseUnits[j].target && baseUnits[j].target.length > 0) {
 
-          units[i].target = baseUnits[j].target;
-          if (Config.formatOutput === true) {
-            units[i].target = trimTarget(units[i].target, units[i].source[0] as string) as string;
+    if (baseUnits != null) {
+      const src = getFirstText(units[i].source);
+      if (typeof src === 'string') {
+        for (let j = 0; j < baseUnits.length; j++) {
+          const baseSrc = getFirstText(baseUnits[j].source);
+          if (typeof baseSrc !== 'string') continue;
+
+          if (sourceEqual(baseSrc, src, Config.formatOutput) && hasTarget(baseUnits[j])) {
+            units[i].target = baseUnits[j].target;
+            if (Config.formatOutput === true) {
+              units[i].target = trimTarget(units[i].target as TargetType, src) as string;
+            }
           }
         }
       }
     }
-
   }
 
   return source;
@@ -78,55 +101,57 @@ export const mergerTranslationJson = async (source: XLIFF.Root, base: XLIFF.Root
  */
 
 export const translateJson = async (source: XLIFF.Root, lang: string, base?: XLIFF.Root): Promise<XLIFF.Root> => {
-
   console.log('translating from: ' + Config.source.lang + ', to: ' + lang + '..');
-  const units: { target: TargetType, source: TargetType }[] = source.xliff.file[0].body[0]['trans-unit'] as unknown as {
-    target: TargetType,
-    source: TargetType
-  }[];
-  let baseUnits: { target: TargetType, source: TargetType }[] = null;
+
+  const units = getTransUnits(source);
+  let baseUnits: TransUnit[] | null = null;
   if (base && base.xliff && base.xliff.file[0]) {
-    baseUnits = base.xliff.file[0].body[0]['trans-unit'] as unknown as { target: TargetType, source: TargetType }[];
+    baseUnits = getTransUnits(base);
     console.log('extending previous translation');
   }
 
   let skipped = 0;
   let errored = 0;
-  outer:
-    for (let i = 0; i < units.length; i++) {
-      if (baseUnits != null) {
-        for (let j = 0; j < baseUnits.length; j++) {
-          if (sourceEqual(baseUnits[j].source[0] as string, units[i].source[0] as string, Config.formatOutput)
-            && baseUnits[j].target && baseUnits[j].target.length > 0) {
 
+  outer: for (let i = 0; i < units.length; i++) {
+    const srcStr = getFirstText(units[i].source);
 
-            units[i].target = baseUnits[j].target;
-            if (Config.formatOutput === true) {
-              units[i].target = trimTarget(units[i].target, units[i].source[0] as string);
-            }
-            skipped++;
-            continue outer;
+    if (baseUnits != null && typeof srcStr === 'string') {
+      for (let j = 0; j < baseUnits.length; j++) {
+        const baseSrc = getFirstText(baseUnits[j].source);
+        if (typeof baseSrc !== 'string') continue;
+
+        if (sourceEqual(baseSrc, srcStr, Config.formatOutput) && hasTarget(baseUnits[j])) {
+          units[i].target = baseUnits[j].target;
+          if (Config.formatOutput === true) {
+            units[i].target = trimTarget(units[i].target as TargetType, srcStr);
           }
+          skipped++;
+          continue outer;
         }
-      }
-      if (skipped > 0) {
-        console.log('skipped ' + skipped + ' translation(s), because already exist');
-        skipped = 0;
-      }
-      console.log(i + '/' + units.length, units[i].source[0]);
-      try {
-        const result = units[i].source[0] as { text: string };
-        if (result.text !== '') {
-          units[i].target = [result.text];
-        } else {
-          units[i].target = units[i].source;
-        }
-      } catch (ex) {
-        errored++;
-        console.warn('Warning: translating error', ex, units[i]);
-        units[i].target = units[i].source;
       }
     }
+
+    if (skipped > 0) {
+      console.log('skipped ' + skipped + ' translation(s), because already exist');
+      skipped = 0;
+    }
+
+    console.log(i + '/' + units.length, (units[i].source as never)[0]);
+
+    try {
+      const result = (units[i].source as never)[0] as { text: string };
+      if (result.text !== '') {
+        units[i].target = [result.text];
+      } else {
+        units[i].target = units[i].source;
+      }
+    } catch (ex) {
+      errored++;
+      console.warn('Warning: translating error', ex, units[i]);
+      units[i].target = units[i].source;
+    }
+  }
 
   if (skipped > 0) {
     console.log('skipped ' + skipped + ' translation(s), because already exist');
@@ -139,10 +164,7 @@ export const translateJson = async (source: XLIFF.Root, lang: string, base?: XLI
 
 
 export const copySourceToTarget = (xliff: XLIFF.Root) => {
-  const units: { target: unknown, source: unknown }[] = xliff.xliff.file[0].body[0]['trans-unit'] as unknown as {
-    target: unknown,
-    source: unknown
-  }[];
+  const units = getTransUnits(xliff) as { target?: TargetType; source: TargetType }[];
   for (let i = 0; i < units.length; i++) {
     units[i].target = units[i].source;
   }
@@ -157,14 +179,11 @@ export const run = async () => {
 
     // Extraction mode: output entries where source == target and do not touch destination
     if (Config.extractOriginalOnly) {
-      const units: { target?: TargetType, source: TargetType }[] = source.xliff.file[0].body[0]['trans-unit'] as unknown as {
-        target?: TargetType,
-        source: TargetType
-      }[];
+      const units = getTransUnits(source);
       const results: { source: string, target: string, lang: string }[] = [];
       for (let i = 0; i < units.length; i++) {
-        const s = units[i].source && (units[i].source[0] as string);
-        const t = units[i].target && (units[i].target[0] as string);
+        const s = getFirstText(units[i].source);
+        const t = getFirstText(units[i].target as TargetType);
         if (typeof s === 'string' && typeof t === 'string' && sourceEqual(s, t, Config.formatOutput)) {
           results.push({ source: s, target: t, lang: Config.source.lang });
         }
@@ -208,23 +227,21 @@ export const run = async () => {
 // Apply translations based on Config.translationMap for a specific language
 const applyTranslationMap = (xliff: XLIFF.Root, lang: string) => {
   try {
-    const units: { target?: TargetType, source: TargetType }[] = xliff.xliff.file[0].body[0]['trans-unit'] as unknown as {
-      target?: TargetType,
-      source: TargetType
-    }[];
+    const units = getTransUnits(xliff);
     const maps = (Config.translationMap || []).filter(m => m && m.lang === lang);
-    if (maps.length === 0) {
-      return;
-    }
+    if (maps.length === 0) return;
+
     for (let i = 0; i < units.length; i++) {
-      const src = units[i].source && (units[i].source[0] as string);
+      const src = getFirstText(units[i].source);
       if (typeof src !== 'string') continue;
+
       const map = maps.find(m => sourceEqual(m.source, src, Config.formatOutput));
       if (!map) continue;
-      // Set target from map
+
+      // Set target from map (preserve original behavior of simple string target)
       units[i].target = [map.target];
       if (Config.formatOutput) {
-        units[i].target = trimTarget(units[i].target, src) as string;
+        units[i].target = trimTarget(units[i].target as TargetType, src) as string;
       }
     }
   } catch (e) {
