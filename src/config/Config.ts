@@ -61,6 +61,11 @@ export class ConfigBuilder {
   formatOutput: boolean = true;
 
 
+  @ConfigProperty({type: 'boolean', description: 'If true, only extract those entries that are not translated yet.'})
+  extractOriginalOnly: boolean = false;
+
+  @ConfigProperty({type: 'array', arrayType: 'object', description: 'Uses it for translation. Format: {source: "source", target: "target", lang: "string"}'})
+  translationMap: { source: string, target: string, lang:string }[] = [];
 }
 
 

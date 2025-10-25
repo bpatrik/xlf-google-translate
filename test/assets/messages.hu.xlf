@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="6641024648411549335" datatype="html">
+        <source>Host</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">104</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">1012</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/subconfigs/MessagingConfig.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <target>Host</target>
+      </trans-unit>
+      <trans-unit id="4198035112366277884" datatype="html">
+        <source>Database</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">124</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">1062</context>
+        </context-group>
+        <target>Adatbázis</target>
+      </trans-unit>
+      <trans-unit id="5248717555542428023" datatype="html">
+        <source>Username</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">134</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/login/login.component.html</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/settings/users/users.component.html</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+        <target>Felhasználónév</target>
+      </trans-unit>
+      <trans-unit id="1431416938026210429" datatype="html">
+        <source>Password</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">144</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">191</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/subconfigs/MessagingConfig.ts</context>
+          <context context-type="linenumber">66</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/gallery/share/share.gallery.component.html</context>
+          <context context-type="linenumber">81</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/gallery/share/share.gallery.component.html</context>
+          <context context-type="linenumber">93</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/login/login.component.html</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/settings/users/users.component.html</context>
+          <context context-type="linenumber">64</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/sharelogin/share-login.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <target>Jelszó</target>
+      </trans-unit>
+      <trans-unit id="5922507650738289450" datatype="html">
+        <source>Sqlite db filename</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">157</context>
+        </context-group>
+        <target>Sqlite db fájlnév</target>
+      </trans-unit>
+      <trans-unit id="6242404539171057139" datatype="html">
+        <source>Sqlite will save the db with this filename.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">161</context>
+        </context-group>
+        <target>Sqlite ezen a néven menti majd el az adatbázist.</target>
+      </trans-unit>
+      <trans-unit id="8953033926734869941" datatype="html">
+        <source>Name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">171</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/public/ClientConfig.ts</context>
+          <context context-type="linenumber">462</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/public/ClientConfig.ts</context>
+          <context context-type="linenumber">643</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/public/ClientConfig.ts</context>
+          <context context-type="linenumber">995</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/settings/extension-installer/extension-installer.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/settings/template/settings-entry/settings-entry.component.html</context>
+          <context context-type="linenumber">261</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/settings/users/users.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <target>Név</target>
+      </trans-unit>
+      <trans-unit id="4145496584631696119" datatype="html">
+        <source>Role</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">181</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/settings/users/users.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/settings/users/users.component.html</context>
+          <context context-type="linenumber">104</context>
+        </context-group>
+        <target>Szerep</target>
+      </trans-unit>
+      <trans-unit id="1923436359287758169" datatype="html">
+        <source>Unencrypted, temporary password. App will encrypt it and delete this.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">195</context>
+        </context-group>
+        <target>Nem titkosított, átmeneti jelszó. Az app titkosítja majd és kitörli ezt a mezőt.</target>
+      </trans-unit>
+      <trans-unit id="4590004310985064600" datatype="html">
+        <source>Encrypted password</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">202</context>
+        </context-group>
+        <target>Titkosított jelszó</target>
+      </trans-unit>
+      <trans-unit id="8650499415827640724" datatype="html">
+        <source>Type</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">237</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/public/ClientConfig.ts</context>
+          <context context-type="linenumber">635</context>
+        </context-group>
+        <target>Típus</target>
+      </trans-unit>
+      <trans-unit id="1238021661446404501" datatype="html">
+        <source>SQLite is recommended.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">242</context>
+        </context-group>
+        <target>SQLite az ajánlott adatbázis.</target>
+      </trans-unit>
+      <trans-unit id="9183561046697462335" datatype="html">
+        <source>Database folder</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">249</context>
+        </context-group>
+        <target>Adatbázis mappa</target>
+      </trans-unit>
+      <trans-unit id="631272345671042051" datatype="html">
+        <source>All file-based data will be stored here (sqlite database, job history data).</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">253</context>
+        </context-group>
+        <target>Minden fájl alapú adat ide lesz mentve (sqlite adatbázis, feladatok naplófájlai).</target>
+      </trans-unit>
+      <trans-unit id="3636930811048814547" datatype="html">
+        <source>SQLite</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">260</context>
+        </context-group>
+        <target>SQLite</target>
+      </trans-unit>
+      <trans-unit id="96151499268029457" datatype="html">
+        <source>MySQL</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">270</context>
+        </context-group>
+        <target>MySQL</target>
+      </trans-unit>
+      <trans-unit id="4719488548459812147" datatype="html">
+        <source>Enforced users</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">287</context>
+        </context-group>
+        <target>Erőltett felhasználó</target>
+      </trans-unit>
+      <trans-unit id="5248918329958232371" datatype="html">
+        <source>Creates these users in the DB during startup if they do not exist. If a user with this name exist, it won't be overwritten, even if the role is different.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">293</context>
+        </context-group>
+        <target>Létrehozza ezeket a felhasználókat az adatbázisban ha még nem léteznek miután beindul az app. Ha a felhasználó már létezik, nem kerül felülírása, még akkor se ha más a szerepköre.</target>
+      </trans-unit>
+      <trans-unit id="243398382055750699" datatype="html">
+        <source>Media allow list</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">301</context>
+        </context-group>
+        <target>Media allow list</target>
+      </trans-unit>
+      <trans-unit id="2297303209691401090" datatype="html">
+        <source>Setting a non empty search query here will make the app to only SHOW photos and videos that match the query. You can override this at every user separately.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">306</context>
+        </context-group>
+        <target>Setting a non empty search query here will make the app to only SHOW photos and videos that match the query. You can override this at every user separately.</target>
+      </trans-unit>
+      <trans-unit id="6440879911587092235" datatype="html">
+        <source>Media block list</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">316</context>
+        </context-group>
+        <target>Media block list</target>
+      </trans-unit>
+      <trans-unit id="7274827546487319402" datatype="html">
+        <source>Setting a non empty search query here will make the app to HIDE photos and videos that match the query. You can override this at every user separately.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">321</context>
+        </context-group>
+        <target>Setting a non empty search query here will make the app to HIDE photos and videos that match the query. You can override this at every user separately.</target>
+      </trans-unit>
+      <trans-unit id="5469820923661123729" datatype="html">
+        <source>High quality resampling</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">335</context>
+        </context-group>
+        <target>High quality resampling</target>
+      </trans-unit>
+      <trans-unit id="5826490037337254388" datatype="html">
+        <source>if true, 'lanczos3' will used to scale photos, otherwise faster but lower quality 'nearest'.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">338</context>
+        </context-group>
+        <target>Ha engedélyezve van, 'lanczos3' használ a fotók átméretezésére, különben gyorsabb ne roszabb minőségű 'nearest'.</target>
+      </trans-unit>
+      <trans-unit id="7563121839842898948" datatype="html">
+        <source>Converted photo and thumbnail quality</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">345</context>
+        </context-group>
+        <target>Átméretezett fotó és thumbnail minőség</target>
+      </trans-unit>
+      <trans-unit id="2244219270224531739" datatype="html">
+        <source>Between 0-100.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">348</context>
+        </context-group>
+        <target>0-100 közötti érték.</target>
+      </trans-unit>
+      <trans-unit id="3617023035573084133" datatype="html">
+        <source>Video transcoding</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">874</context>
+        </context-group>
+        <target>Video transcoding</target>
+      </trans-unit>
+      <trans-unit id="2912981795912370687" datatype="html">
+        <source>To ensure smooth video playback, video transcoding is recommended to a lower bit rate than the server's upload rate.   The transcoded videos will be saved to the thumbnail folder.  You can trigger the transcoding manually, but you can also create an automatic encoding job in advanced settings mode.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">878</context>
+        </context-group>
+        <target>To ensure smooth video playback, video transcoding is recommended to a lower bit rate than the server's upload rate.   The transcoded videos will be saved to the thumbnail folder.  You can trigger the transcoding manually, but you can also create an automatic encoding job in advanced settings mode.</target>
+      </trans-unit>
+      <trans-unit id="3200155866272065974" datatype="html">
+        <source>Cover Filter query</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">889</context>
+        </context-group>
+        <target>Cover Filter query</target>
+      </trans-unit>
+      <trans-unit id="3934792735027900470" datatype="html">
+        <source>Filters the sub-folders with this search query. If filter results no photo, the app will search again without the filter.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">894</context>
+        </context-group>
+        <target>Az almappákat ezzel a kereséssel szűri a előnézet kiválasztásához. Ha nincs ilyen fotó, újkeresést indít az app, de már a szűrő nélkül.</target>
+      </trans-unit>
+      <trans-unit id="6038145233304913703" datatype="html">
+        <source>Cover Sorting</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">903</context>
+        </context-group>
+        <target>Cover Sorting</target>
+      </trans-unit>
+      <trans-unit id="7281714126487619000" datatype="html">
+        <source>If multiple cover is available sorts them by these methods and selects the first one.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">907</context>
+        </context-group>
+        <target>If multiple cover is available sorts them by these methods and selects the first one.</target>
+      </trans-unit>
+      <trans-unit id="4487775872787805732" datatype="html">
+        <source>Images folder</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">921</context>
+        </context-group>
+        <target>Képek mappa</target>
+      </trans-unit>
+      <trans-unit id="3675884621668409255" datatype="html">
+        <source>Images are loaded from this folder (read permission required)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">926</context>
+        </context-group>
+        <target>A képek ebből a mappából töltődnek be (olvasási engedély szükséges a mappára)</target>
+      </trans-unit>
+      <trans-unit id="2771235786507007543" datatype="html">
+        <source>Temp folder</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">932</context>
+        </context-group>
+        <target>Temp mappa</target>
+      </trans-unit>
+      <trans-unit id="9031495654448374643" datatype="html">
+        <source>Thumbnails, converted photos, videos will be stored here (write permission required)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">937</context>
+        </context-group>
+        <target>Thumbnails, konvertált fotók, videók lesznek itt tárolva (írási jog szükséges)</target>
+      </trans-unit>
+      <trans-unit id="6549265851868599441" datatype="html">
+        <source>Video</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">943</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/public/ClientConfig.ts</context>
+          <context context-type="linenumber">1304</context>
+        </context-group>
+        <target>Videó</target>
+      </trans-unit>
+      <trans-unit id="7232490753450335839" datatype="html">
+        <source>Video support uses ffmpeg. ffmpeg and ffprobe binaries need to be available in the PATH or the @ffmpeg-installer/ffmpeg and @ffprobe-installer/ffprobe optional node packages need to be installed.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">952</context>
+        </context-group>
+        <target>A videó lejátszához az ffmpeg szükséges. Az ffmpeg és az ffprobe binárisoknak rendelkezésre kell állniuk a PATH-ban vagy az @ffmpeg-installer/ffmpeg és @ffprobe-installer/ffprobe opcionális node csomagokat kell telepíteni.</target>
+      </trans-unit>
+      <trans-unit id="5750485945694679561" datatype="html">
+        <source>Photo</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">957</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/public/ClientConfig.ts</context>
+          <context context-type="linenumber">1311</context>
+        </context-group>
+        <target>Fotó</target>
+      </trans-unit>
+      <trans-unit id="537022937435161177" datatype="html">
+        <source>Session Timeout</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">980</context>
+        </context-group>
+        <target>Session időtúllépés</target>
+      </trans-unit>
+      <trans-unit id="7127520017089378528" datatype="html">
+        <source>Users kept logged in for this long time.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">984</context>
+        </context-group>
+        <target>Felhsználók ennyi ideig maradnak bejelentkezve.</target>
+      </trans-unit>
+      <trans-unit id="11483675611752258" datatype="html">
+        <source>Trust Proxy</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">990</context>
+        </context-group>
+        <target>Trust Proxy</target>
+      </trans-unit>
+      <trans-unit id="6628643830998398978" datatype="html">
+        <source>Should the backend trust proxies to extract remote Client IP. See express docs, for valid values: https://expressjs.com/en/guide/behind-proxies.html</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">994</context>
+        </context-group>
+        <target>Should the backend trust proxies to extract remote Client IP. See express docs, for valid values: https://expressjs.com/en/guide/behind-proxies.html</target>
+      </trans-unit>
+      <trans-unit id="2521241309786115337" datatype="html">
+        <source>Port number. Port 80 is usually what you need.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">1005</context>
+        </context-group>
+        <target>Portszám. A 80-as port általában az, amire szükséged van.</target>
+      </trans-unit>
+      <trans-unit id="5922774431911312513" datatype="html">
+        <source>Server will accept connections from this IPv6 or IPv4 address.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">1017</context>
+        </context-group>
+        <target>A szerver csak erről az (IPv6 vagy az IPv4) címből származó kapcsolatokat fog fogadni.</target>
+      </trans-unit>
+      <trans-unit id="4804785061014590286" datatype="html">
+        <source>Logs</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/common/config/private/PrivateConfig.ts</context>
+          <context context-type="linenumber">1023</context>
+        </context-group>
+        <target>Napló</target>
+      </trans-unit>
+      <trans-unit id="3588415639242079458" datatype="html">
+        <source>New password</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/settings/users/users.component.html</context>
+          <context context-type="linenumber">113</context>
+        </context-group>
+        <target>New password</target>
+      </trans-unit>
+      <trans-unit id="1616102757855967475" datatype="html">
+        <source>All</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/frontend/app/ui/settings/workflow/progress/job-progress.settings.component.html</context>
+          <context context-type="linenumber">92</context>
+        </context-group>
+        <target>Összes</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

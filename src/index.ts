@@ -9,19 +9,24 @@ if (Config.source.lang == null) {
   console.log('source.lang is not set');
   process.exit();
 }
-if (Config.destination.languages == null) {
-  console.log('destination.languages is not set');
-  process.exit();
+
+// Validate destination settings only when not extracting originals only
+if (!Config.extractOriginalOnly) {
+  if (Config.destination.languages == null) {
+    console.log('destination.languages is not set');
+    process.exit();
+  }
+
+  if (Config.destination.filename == null) {
+    console.log('destination.filename is not set');
+    process.exit();
+  }
+
+  if (Config.destination.folder == null) {
+    console.log('destination.folder is not set');
+    process.exit();
+  }
 }
 
-if (Config.destination.filename == null) {
-  console.log('destination.filename is not set');
-  process.exit();
-}
-
-if (Config.destination.folder == null) {
-  console.log('destination.folder is not set');
-  process.exit();
-}
 run().catch(console.error);
 
