@@ -230,6 +230,7 @@ const applyTranslationMap = (xliff: XLIFF.Root, lang: string) => {
     const units = getTransUnits(xliff);
     const maps = (Config.translationMap || []).filter(m => m && m.lang === lang);
     if (maps.length === 0) return;
+    console.log('Applying translation map for language: ' + lang);
 
     for (let i = 0; i < units.length; i++) {
       const src = getFirstText(units[i].source);
