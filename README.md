@@ -21,7 +21,7 @@ trailing dot difference is ignored too.
 
 ## Usage
 
-Requires Node.js 18 or newer.
+Requires Node.js 22 or newer.
 
 ```bash
 npm install --save-dev xlf-google-translate

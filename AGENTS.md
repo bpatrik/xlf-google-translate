@@ -48,6 +48,7 @@ npm start          # node dist/cli.js; needs a build and config (CLI switches or
 
 - `tsconfig.json` is the strict base config (editor, typecheck, ESLint, ts-node). Its `module` is `Node20` so tests can
   `require()` the ESM-only `chai`. `tsconfig.build.json` extends it with `Node16` and only includes `src/`.
+- Supported Node.js: 22 and newer (`engines`, README). CI tests 22, 24 and 26; drop versions once they reach EOL.
 - Output is CommonJS in `dist/` (git-ignored). Only `dist/` is published (`files` in package.json).
 - `useDefineForClassFields: false` is required: typeconfig's property decorators break with [[Define]] class fields.
 - `tslib` is a runtime dependency because typeconfig requires it without declaring it.
