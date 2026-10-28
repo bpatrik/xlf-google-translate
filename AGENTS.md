@@ -85,3 +85,11 @@ npm start          # node dist/cli.js; needs a build and config (CLI switches or
 - `console.log` is the logging mechanism (this is a CLI); library functions take an optional `Logger` instead.
 - Build output (`dist/`) is git-ignored; don't commit it.
 - Add or update tests in `test/` when changing behavior.
+
+## Keeping this file current
+
+- When the repo owner (Patrik J. Braun) tells you something new about the project — a convention, preference,
+  correction, workflow or gotcha that is not already captured here — update this `AGENTS.md` accordingly, so
+  future agents (and Claude Code via `CLAUDE.md`) pick it up.
+- Keep edits concise, put them in the relevant section, and fix or remove anything here that turns out to be wrong.
+- `AGENTS.md` is the single source of truth; `CLAUDE.md` only imports it, so don't add content to `CLAUDE.md`.
