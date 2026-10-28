@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    // the build output targets Node >= 18 (tests use Node20 so they can require() the ESM-only chai)
+    "module": "Node16",
+    "outDir": "dist",
+    "types": ["node"],
+    "noEmit": false,
+    "declaration": true,
+    "sourceMap": true,
+    "inlineSources": true
+  },
+  "include": ["src/**/*.ts"]
+}

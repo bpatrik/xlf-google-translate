@@ -1,27 +1,22 @@
 // @ts-check
-import eslint from "@eslint/js";
-import tseslint from "typescript-eslint";
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
 import chaiFriendly from 'eslint-plugin-chai-friendly';
 
 export default tseslint.config(
   {
-    files: ["src/*.ts"],
-    extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommended,
-      ...tseslint.configs.stylistic,
-    ],
-    rules: {
-      '@typescript-eslint/prefer-for-of': 'off'
-    }
+    ignores: ['dist/', 'node_modules/', '**/*.js', '**/*.d.ts']
   },
   {
-    files: ["test/*.ts"],
+    files: ['src/**/*.ts', 'test/**/*.ts'],
     extends: [
       eslint.configs.recommended,
       ...tseslint.configs.recommended,
       ...tseslint.configs.stylistic,
-    ],
+    ]
+  },
+  {
+    files: ['test/**/*.ts'],
     plugins: {
       'chai-friendly': chaiFriendly
     },

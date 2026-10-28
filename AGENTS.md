@@ -15,64 +15,73 @@ Despite the name, **it no longer calls Google Translate** (removed in v1.0.0-bet
 - **Extract untranslated entries** (`extractOriginalOnly: true`) — prints a JSON list of units whose `target` equals
   `source`, so they can be translated externally and fed back in via `translationMap`.
 
+Its main consumer is pigallery2 (`../PiGallery2`, `gulpfile.ts`): it runs the CLI with
+`--method=extend-only --source-lang --source-file --destination-filename --destination-folder --destination-languages`
+switches and imports the `XLIFF` types with `moduleResolution: node`. Keep `main`/`types` and those switches working.
+
 ## Layout
 
 | Path | Purpose |
 | --- | --- |
-| `cli.ts` | `bin` entry (`xlf-google-translate`); calls `run()` directly (no config validation). |
-| `src/index.ts` | `npm start` entry; validates required config, then calls `run()`. |
-| `src/translator.ts` | All core logic: `run`, `mergerTranslationJson`, `translateJson` (deprecated), `applyTranslationMap`, `sourceEqual`, `copySourceToTarget`. |
-| `src/file.ts` | `loadXml` / `writeXml` via `xml2js`. |
-| `src/XLIFF.ts` | TypeScript shape of the parsed XLIFF (`XLIFF.Root`). |
+| `src/cli.ts` | `bin` entry (`xlf-google-translate`, also `npm start`): loads `Config`, validates it with `resolveOptions`, calls `run()`, sets exit code 1 on failure. |
+| `src/index.ts` | Library entry (`main`/`types`): re-exports the `XLIFF` types and the pure API. Must stay side-effect free: never import `Config` here. |
+| `src/translator.ts` | Core logic: `run`, `mergeTranslations`, `applyTranslationMap`, `extractUntranslated`, `sourceEqual`/`normalizeSource`, `formatTarget`. |
+| `src/options.ts` | `RunOptions` / `RawOptions` types and `resolveOptions` (validation + defaults). |
+| `src/file.ts` | `loadXml` / `toXml` / `writeXml` via `xml2js`. |
+| `src/XLIFF.ts` | TypeScript shape of the parsed XLIFF (`XLIFF.Root`, `TransUnit`, `Content`). |
 | `src/config/Config.ts` | Config schema built with `typeconfig` decorators. |
-| `index.ts` | Library export (only the `XLIFF` types). |
-| `test/translator.spec.ts` | Mocha + Chai tests. |
+| `test/*.spec.ts` | Mocha + Chai tests run through ts-node. `run.spec.ts` covers `run()` and the CLI using `test/assets/messages.hu.xlf`. |
 
 ## Commands
 
 ```bash
 npm install
-npm run build      # tsc — compiles .ts to .js next to the sources (no outDir)
-npm test           # runs build first (pretest), then mocha on the compiled test/*.js
+npm test           # mocha + ts-node on test/**/*.spec.ts (no build needed)
+npm run typecheck  # tsc --noEmit over src and test
 npm run lint       # eslint (flat config, eslint.config.mjs)
 npm run lint:fix
-npm start          # node src/index.js — requires a build and a config.json
+npm run build      # tsc -p tsconfig.build.json: src/ -> dist/ (js, d.ts, source maps)
+npm start          # node dist/cli.js; needs a build and config (CLI switches or config.json)
 ```
 
-Always run `npm run build` before `npm start` or mocha; nothing runs from `.ts` directly.
+## Build and TypeScript
+
+- `tsconfig.json` is the strict base config (editor, typecheck, ESLint, ts-node). Its `module` is `Node20` so tests can
+  `require()` the ESM-only `chai`. `tsconfig.build.json` extends it with `Node16` and only includes `src/`.
+- Output is CommonJS in `dist/` (git-ignored). Only `dist/` is published (`files` in package.json).
+- `useDefineForClassFields: false` is required: typeconfig's property decorators break with [[Define]] class fields.
+- `tslib` is a runtime dependency because typeconfig requires it without declaring it.
 
 ## Configuration
 
-- `Config` (`src/config/Config.ts`) is loaded **at import time** (`Config.loadSync()`) from `config.json` in the
-  repo root (resolved relative to the compiled `src/config/` directory). It is created with defaults if missing
-  (`saveIfNotExist`). `config.json` is git-ignored — never commit it.
+- `Config` (`src/config/Config.ts`) is loaded **at import time** (`Config.loadSync()`) from `config.json` in the package
+  root (resolved relative to `dist/config/`, overridable with `--config-path=<file>`). It is created with defaults if
+  missing (`saveIfNotExist`). `config.json` is git-ignored — never commit it. Only `src/cli.ts` imports `Config`.
 - `typeconfig` also accepts overrides from CLI arguments and environment variables.
 - Options: `source.{lang,file}`, `destination.{folder,languages,filename}`,
   `method` (`extend-only` | `extend` | `rewrite`), `formatOutput`, `extractOriginalOnly`,
-  `translationMap: {source, target, lang}[]`.
-- Because tests import `Config`, running tests also reads/creates `config.json`. Tests mutate `Config.formatOutput`
-  directly — keep that in mind when adding tests that depend on config state.
+  `translationMap: {source, target, lang}[]`. Validate new required options in `resolveOptions`.
+- Core functions take options as parameters, so tests never touch `Config` or `config.json`.
 
 ## Code notes and gotchas
 
 - Parsed XLIFF from `xml2js` is array-heavy: units live at `root.xliff.file[0].body[0]['trans-unit']`, and
   `source`/`target` are arrays whose first element is either a string or an object `{ _: string, ... }` (when the
-  element has attributes or inline children). Use the `getFirstText` / `getTransUnits` helpers rather than indexing raw.
-- `sourceEqual` collapses all whitespace before comparing; with `formatOutput` it also ignores a trailing `.` mismatch.
-  `trimTarget` collapses whitespace in the target and re-adds a trailing `.` if the source has one.
-- Matching is a nested O(n·m) loop over source and base units by source text (not by `id`). Later matches win in
-  `mergerTranslationJson`; the first match wins in `translateJson`.
-- `translateJson` is deprecated: for units without an existing base translation it no longer translates anything.
-  Prefer `extend-only` + `translationMap` for new work.
+  element has attributes or inline children). Use the `getText` / `getTransUnits` helpers rather than indexing raw.
+- `mergeTranslations` / `applyTranslationMap` return deep copies (`structuredClone`) and never mutate their inputs.
+- Matching is by normalized source text (not by `id`) through a `Map`: whitespace is collapsed and, with `formatOutput`,
+  one trailing `.` is ignored. `formatTarget` collapses whitespace in the target and re-adds a trailing `.` if the
+  source has one.
+- With duplicate sources in the existing file, a real translation beats a target equal to the source; otherwise the
+  last match wins (`extend-only`) or the first one (`extend`, via `firstMatchWins`). `rewrite` ignores the existing file.
+- In `extractOriginalOnly` mode the CLI prints JSON to stdout and logs to stderr; keep stdout clean there.
 - Known limitation: sources containing interpolation/placeholders (`<x id=.../>`) are not handled well.
-- `cli.ts` skips the validation done in `src/index.ts`; keep them in sync if you add required options.
-- Legacy files: `tslint.json` and `.travis.yml` are stale (ESLint and modern Node are what's actually used).
 
 ## Style
 
-- TypeScript, CommonJS, target ES2015, `noImplicitAny`, decorators enabled (needed by `typeconfig`).
+- TypeScript (strict), CommonJS output, target ES2022, decorators enabled (needed by `typeconfig`).
 - 2-space indent, UTF-8, final newline (`.editorconfig`). Single quotes; imports written as `{a, b}` without inner spaces.
 - Code style is arrow-function exports and short `//` comments; match the surrounding code.
-- `console.log` is the logging mechanism (this is a CLI).
-- Compiled `.js`, `.js.map` and `.d.ts` files are git-ignored; don't commit build output.
-- Add or update tests in `test/translator.spec.ts` when changing `translator.ts` behavior.
+- `console.log` is the logging mechanism (this is a CLI); library functions take an optional `Logger` instead.
+- Build output (`dist/`) is git-ignored; don't commit it.
+- Add or update tests in `test/` when changing behavior.

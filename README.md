@@ -1,41 +1,97 @@
-# Deprecated, not supporting translation anymore since v1.0.0-beta.22
 # xlf-google-translate
-[![Build Status](https://travis-ci.org/bpatrik/xlf-google-translate.svg?branch=master)](https://travis-ci.org/bpatrik/xlf-google-translate)
 
-It translates the Angular 2 i18n output with google translate
+[![CI](https://github.com/bpatrik/xlf-google-translate/actions/workflows/ci.yml/badge.svg)](https://github.com/bpatrik/xlf-google-translate/actions/workflows/ci.yml)
 
+Keeps Angular i18n XLIFF (`*.xlf`) translation files in sync with a freshly extracted source file.
+
+> **Note:** despite the name, this tool no longer calls Google Translate (removed in v1.0.0-beta.22).
+> Translations can be supplied through `translationMap` instead, e.g. from an AI translation step.
 
 ## Features
-It uses a `*.xlf` file as an input and translates the `source` tags of the xml with google translate and appends them to the xml as `target`.
-It can extend existing translations. A good feature if new/additional text appear in the app. 
+
+- **Merge:** reads the source `messages.xlf` (e.g. the output of `ng extract-i18n`) and writes
+  `<filename>.<lang>.xlf` for every destination language. Existing translations from that file are kept,
+  and new texts get their source text as target.
+- **Translation map:** applies `{source, target, lang}` entries on top of the merged files.
+- **Extract untranslated:** prints a JSON list of the units whose target is still the same as the source.
+  You can translate the list and pass it back as `translationMap`.
+
+Sources are matched by text, not by id. Whitespace differences are ignored, and with `formatOutput` a
+trailing dot difference is ignored too.
 
 ## Usage
-1) Run `npm run build`
-2) Edit the `config.js` to match your requirements
-3) Run `npm run start` and your files will be created
 
-config example:
-```json
+```bash
+npm install --save-dev xlf-google-translate
+```
+
+```bash
+xlf-google-translate --method="extend-only" --source-lang="en" --source-file="./locale.source.xlf" \
+  --destination-filename="messages" --destination-folder="./src/translate" \
+  --destination-languages='["hu","de"]'
+```
+
+To list what still needs translating:
+
+```bash
+xlf-google-translate --extractOriginalOnly=true --source-lang="hu" --source-file="./src/translate/messages.hu.xlf" > todo.json
+```
+
+In this mode only the JSON goes to stdout. Progress messages go to stderr.
+
+The command exits with a non-zero code when the configuration is invalid or a file cannot be read or written.
+
+### Configuration
+
+Options come from [typeconfig](https://github.com/bpatrik/typeconfig): CLI switches (as above), environment
+variables, or a `config.json` file (pass `--config-path=<file>` to pick its location; `--help` lists everything).
+
+```jsonc
 {
-    //source data and it language
-    "source": { 
-        "lang": "en",
-        "file": ".../messages.xlf"
-    },
-    //desitnation folder and the laguages to translate
-    "destination": {
-        "folder": ".../src/locale",
-        "languages": ["hu","de"],
-        "filename": "messages"
-    },
-    //if extend, it does not override the already trasnlated parts
-    "method": "extend",
-    //replaces all line breaks, whitespaces with a single space
-    "formatOutput": true
+  "source": {
+    "lang": "en",
+    "file": "./locale.source.xlf"
+  },
+  "destination": {
+    "folder": "./src/translate",
+    "languages": ["hu", "de"],
+    "filename": "messages"
+  },
+  // extend-only | extend: keep existing translations, rewrite: start from scratch
+  "method": "extend-only",
+  // collapse whitespace in targets and ignore trailing dot differences when matching
+  "formatOutput": true,
+  // only print untranslated entries as JSON, do not write anything
+  "extractOriginalOnly": false,
+  // translations applied on top of the merged files
+  "translationMap": [
+    {"source": "Apple", "target": "Alma", "lang": "hu"}
+  ]
 }
 ```
 
+### Library
 
-## known bugs:
+```ts
+import {loadXml, mergeTranslations, writeXml, XLIFF} from 'xlf-google-translate';
 
-Can't handle variable in the `source`
+const source: XLIFF.Root = await loadXml('locale.source.xlf');
+const merged = mergeTranslations(source, await loadXml('messages.hu.xlf'));
+await writeXml(merged, 'messages.hu.xlf');
+```
+
+Importing the library has no side effects. Only the CLI loads `config.json`.
+
+## Development
+
+```bash
+npm install
+npm test           # mocha + ts-node, no build needed
+npm run lint
+npm run typecheck
+npm run build      # compiles src/ to dist/
+```
+
+## Known limitations
+
+Sources that contain placeholders or inline elements (e.g. `<x id="INTERPOLATION"/>`) are not handled well.

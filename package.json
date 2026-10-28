@@ -1,24 +1,56 @@
 {
   "name": "xlf-google-translate",
-  "version": "1.0.4",
+  "version": "2.0.0",
+  "description": "Merges existing translations into freshly extracted Angular i18n XLIFF (*.xlf) files",
   "author": "Patrik J. Braun",
-  "scripts": {
-    "start": "node src/index.js",
-    "build": "tsc",
-    "pretest": "npm run build",
-    "test": "mocha --recursive test/",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bpatrik/xlf-google-translate.git"
+  },
+  "keywords": [
+    "angular",
+    "i18n",
+    "xliff",
+    "xlf",
+    "translation"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "bin": {
-    "xlf-google-translate": "./cli.js"
+    "xlf-google-translate": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "clean": "node -e \"require('fs').rmSync('dist', {recursive: true, force: true})\"",
+    "build": "npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc",
+    "start": "node dist/cli.js",
+    "test": "mocha",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepublishOnly": "npm run lint && npm run typecheck && npm test && npm run build"
   },
   "dependencies": {
     "reflect-metadata": "0.2.2",
+    "tslib": "2.8.1",
     "typeconfig": "2.3.1",
     "xml2js": "0.6.2"
   },
   "devDependencies": {
+    "@eslint/js": "9.38.0",
     "@types/chai": "5.2.3",
     "@types/mocha": "10.0.10",
     "@types/node": "24.9.1",
@@ -28,7 +60,6 @@
     "eslint-plugin-chai-friendly": "1.1.0",
     "mocha": "11.7.4",
     "ts-node": "10.9.2",
-    "tslib": "2.8.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.46.2"
   }
