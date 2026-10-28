@@ -1,6 +1,6 @@
 {
   "name": "xlf-google-translate",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Merges existing translations into freshly extracted Angular i18n XLIFF (*.xlf) files",
   "author": "Patrik J. Braun",
   "license": "MIT",

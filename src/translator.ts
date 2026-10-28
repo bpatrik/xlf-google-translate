@@ -1,7 +1,7 @@
 import {promises as fsp} from 'fs';
 import * as path from 'path';
 import {XLIFF} from './XLIFF';
-import {loadXml, writeXml} from './file';
+import {canonicalizeContent, loadXml, TAG_REGEX, writeXml} from './file';
 import {Logger, RunOptions, TranslationMapEntry} from './options';
 
 export interface MergeOptions {
@@ -20,11 +20,24 @@ export interface RunResult {
 
 const collapseWhitespace = (text: string): string => text.replace(/\s+/g, ' ').trim();
 
+// Collapses whitespace outside inline elements only, so their attributes stay untouched
+const collapseTextWhitespace = (xml: string): string =>
+  xml.split(/(<[^<>]+>)/).map((part, i) => i % 2 === 1 ? part : part.replace(/\s+/g, ' ')).join('').trim();
+
+// Inline elements reduced to their name and id: <x id="PH" equiv-text="n"/> -> <x id="PH"/>
+const normalizeTags = (xml: string): string => xml.replace(TAG_REGEX, tag => {
+  const name = /^<\/?\s*([^\s/>]+)/.exec(tag)?.[1] ?? '';
+  const id = /\sid\s*=\s*("[^"]*"|'[^']*')/.exec(tag)?.[1].slice(1, -1);
+  return '<' + (tag.startsWith('</') ? '/' : '') + name + (id !== undefined ? ' id="' + id + '"' : '') +
+    (tag.endsWith('/>') ? '/>' : '>');
+});
+
 const clone = <T>(value: T): T => structuredClone(value);
 
-// Key used to match sources: whitespace collapsed and, optionally, one trailing dot dropped
+// Key used to match sources: whitespace collapsed, inline elements reduced to name and id and,
+// optionally, one trailing dot dropped
 export const normalizeSource = (text: string, disregardDots = false): string => {
-  const normalized = collapseWhitespace(text);
+  const normalized = collapseWhitespace(normalizeTags(text));
   return disregardDots && normalized.endsWith('.') ? normalized.slice(0, -1) : normalized;
 };
 
@@ -38,7 +51,7 @@ export const sourceEqual = (a: string, b: string, disregardDots = false): boolea
 export const getTransUnits = (root: XLIFF.Root | undefined): XLIFF.TransUnit[] =>
   root?.xliff?.file?.[0]?.body?.[0]?.['trans-unit'] ?? [];
 
-// Text of the first element of a <source>/<target>, whether it is plain or has attributes/children
+// Inner XML of the first element of a <source>/<target>, whether it is plain or has attributes
 export const getText = (content: XLIFF.Content | undefined): string | undefined => {
   const first = Array.isArray(content) ? content[0] : undefined;
   if (typeof first === 'string') {
@@ -53,11 +66,20 @@ export const getText = (content: XLIFF.Content | undefined): string | undefined 
 const hasTarget = (unit: XLIFF.TransUnit): unit is XLIFF.TransUnit & {target: XLIFF.Content} =>
   Array.isArray(unit.target) && unit.target.length > 0;
 
-// Collapses whitespace in the target and adds a trailing dot if the source has one
+// Collapses whitespace in the target, adds a trailing dot if the source has one and keeps a single leading or
+// trailing space where the source has one
 export const formatTarget = (target: XLIFF.Content, source: string): XLIFF.Content => {
+  const trimmedSource = source.trim();
   const format = (text: string): string => {
-    const formatted = collapseWhitespace(text);
-    return source.endsWith('.') && !formatted.endsWith('.') ? formatted + '.' : formatted;
+    let formatted = collapseTextWhitespace(text);
+    if (formatted === '') {
+      return formatted;
+    }
+    if (trimmedSource.endsWith('.') && !formatted.endsWith('.')) {
+      formatted += '.';
+    }
+    // a space at the edge of the source can separate the text from what is around it in the template
+    return (/^\s/.test(source) ? ' ' : '') + formatted + (/\s$/.test(source) ? ' ' : '');
   };
   const [first, ...rest] = target;
   if (typeof first === 'string') {
@@ -109,7 +131,7 @@ export const applyTranslationMap = (xliff: XLIFF.Root, lang: string, translation
                                     formatOutput = true): XLIFF.Root => {
   const translations = new Map<string, string>();
   for (const entry of translationMap) {
-    const key = normalizeSource(entry.source, formatOutput);
+    const key = normalizeSource(canonicalizeContent(entry.source), formatOutput);
     if (entry.lang === lang && !translations.has(key)) {
       translations.set(key, entry.target);
     }
@@ -125,7 +147,9 @@ export const applyTranslationMap = (xliff: XLIFF.Root, lang: string, translation
     if (text === undefined || translation === undefined) {
       continue;
     }
-    unit.target = formatOutput ? formatTarget([translation], text) : [translation];
+    // map entries are inner XML too; stray '&', '<' or '>' in their text get escaped
+    const target = canonicalizeContent(translation);
+    unit.target = formatOutput ? formatTarget([target], text) : [target];
   }
   return result;
 };

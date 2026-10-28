@@ -1,6 +1,6 @@
 // Library entry point; importing it has no side effects (config is only loaded by the CLI)
 export {XLIFF} from './XLIFF';
-export {loadXml, toXml, writeXml} from './file';
+export {canonicalizeContent, loadXml, parseXml, toXml, writeXml} from './file';
 export {Logger, Method, METHODS, RawOptions, resolveOptions, RunOptions, TranslationMapEntry} from './options';
 export {
   applyTranslationMap,

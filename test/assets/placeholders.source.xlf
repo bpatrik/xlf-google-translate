@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="deleted" datatype="html">
+        <source>Deleted <x id="PH" equiv-text="count"/> photos
+          from <x id="PH_1" equiv-text="directory.name"/>.</source>
+      </trans-unit>
+      <trans-unit id="moved" datatype="html">
+        <source>Moved <x id="PH" equiv-text="a"/> to <x id="PH_1" equiv-text="b"/></source>
+      </trans-unit>
+      <trans-unit id="shared" datatype="html">
+        <source>Shared <x id="PH"/> videos</source>
+      </trans-unit>
+      <trans-unit id="open" datatype="html">
+        <source>Open <x id="PH_1"/></source>
+      </trans-unit>
+      <trans-unit id="debug" datatype="html">
+        <source>Set <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>NODE_ENV<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/> to debug.</source>
+      </trans-unit>
+      <trans-unit id="accents" datatype="html">
+        <source>Flood-proof mirror drill</source>
+      </trans-unit>
+      <trans-unit id="entities" datatype="html">
+        <source>Tom &amp; Jerry &#60;3</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

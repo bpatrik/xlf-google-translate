@@ -92,6 +92,10 @@ npm run typecheck
 npm run build      # compiles src/ to dist/
 ```
 
-## Known limitations
+## Placeholders
 
-Sources that contain placeholders or inline elements (e.g. `<x id="INTERPOLATION"/>`) are not handled well.
+The content of `<source>` and `<target>` is handled as inner XML, so placeholders and inline elements
+(e.g. `<x id="INTERPOLATION" equiv-text="{{ n }}"/>`) stay where they are in the text. When matching sources,
+placeholders are compared by element name and `id` only (`equiv-text` and other attributes may differ). A target
+can reorder the placeholders of its source. Translation map entries and extracted entries are inner XML too, so
+keep the `<x .../>` elements in your translations.

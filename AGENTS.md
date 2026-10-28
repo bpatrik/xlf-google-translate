@@ -67,15 +67,19 @@ npm start          # node dist/cli.js; needs a build and config (CLI switches or
 
 - Parsed XLIFF from `xml2js` is array-heavy: units live at `root.xliff.file[0].body[0]['trans-unit']`, and
   `source`/`target` are arrays whose first element is either a string or an object `{ _: string, ... }` (when the
-  element has attributes or inline children). Use the `getText` / `getTransUnits` helpers rather than indexing raw.
+  element has attributes). That string is the raw inner XML (`Deleted <x id="PH"/> photos`, entities kept escaped):
+  `parseXml` escapes the inner XML before xml2js sees it and `toXml` swaps it back in through tokens. Text between
+  inline elements is re-escaped canonically (`canonicalizeContent`, same escaping as xml2js's builder) so plain-text
+  output stays byte-identical to older versions. Use the `getText` / `getTransUnits` helpers rather than indexing raw.
 - `mergeTranslations` / `applyTranslationMap` return deep copies (`structuredClone`) and never mutate their inputs.
 - Matching is by normalized source text (not by `id`) through a `Map`: whitespace is collapsed and, with `formatOutput`,
-  one trailing `.` is ignored. `formatTarget` collapses whitespace in the target and re-adds a trailing `.` if the
-  source has one.
+  one trailing `.` is ignored. Inline elements are compared by name and `id` only. `formatTarget` collapses whitespace
+  outside inline elements and re-adds a trailing `.` if the (trimmed) source has one. It keeps a single leading or
+  trailing space where the source has one: Angular keeps edge spaces that separate the text from inline template
+  content, so trimming them can join words. Merging the tool's own output again must give the same result.
 - With duplicate sources in the existing file, a real translation beats a target equal to the source; otherwise the
   last match wins (`extend-only`) or the first one (`extend`, via `firstMatchWins`). `rewrite` ignores the existing file.
 - In `extractOriginalOnly` mode the CLI prints JSON to stdout and logs to stderr; keep stdout clean there.
-- Known limitation: sources containing interpolation/placeholders (`<x id=.../>`) are not handled well.
 
 ## Style
 
@@ -85,6 +89,9 @@ npm start          # node dist/cli.js; needs a build and config (CLI switches or
 - `console.log` is the logging mechanism (this is a CLI); library functions take an optional `Logger` instead.
 - Build output (`dist/`) is git-ignored; don't commit it.
 - Add or update tests in `test/` when changing behavior.
+- Avoid output churn: unchanged units must be written byte-identically, so PiGallery2's `messages.*.xlf` files only
+  change where a change is intended. Before releasing an output change, merge PiGallery2's `locale.source.xlf` into
+  copies of its `src/frontend/translate/messages.*.xlf` with the old and new build and review the diff.
 
 ## Keeping this file current
 

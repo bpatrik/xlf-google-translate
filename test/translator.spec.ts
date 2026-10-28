@@ -1,4 +1,7 @@
 import {expect} from 'chai';
+import {promises as fsp} from 'fs';
+import * as path from 'path';
+import {loadXml, toXml} from '../src/file';
 import {
   applyTranslationMap,
   extractUntranslated,
@@ -10,7 +13,7 @@ import {
   sourceEqual
 } from '../src/translator';
 import {XLIFF} from '../src/XLIFF';
-import {targets, xliff} from './helpers';
+import {silent, targets, xliff} from './helpers';
 
 
 describe('translator', () => {
@@ -70,6 +73,19 @@ describe('translator', () => {
       expect(formatTarget(['alma'], 'apple')).to.deep.eq(['alma']);
     });
 
+    it('keeps a single leading or trailing space where the source has one', () => {
+      expect(formatTarget(['Másolás'], 'Copy ')).to.deep.eq(['Másolás ']);
+      expect(formatTarget(['  Statisztika: \n'], ' Statistic: ')).to.deep.eq([' Statisztika: ']);
+      expect(formatTarget([' Menü'], '\n  Menu')).to.deep.eq([' Menü']);
+      expect(formatTarget([' alma '], 'apple')).to.deep.eq(['alma']);
+      expect(formatTarget([' '], ' ')).to.deep.eq(['']);
+    });
+
+    it('checks the trailing dot ignoring spaces at the end of the source', () => {
+      expect(formatTarget(['Időkorlát'], 'Timeout. ')).to.deep.eq(['Időkorlát. ']);
+      expect(formatTarget(['<x id="PH"/> törölve'], ' Deleted <x id="PH"/>. ')).to.deep.eq([' <x id="PH"/> törölve. ']);
+    });
+
     it('formats attributed content without mutating the input', () => {
       const target: XLIFF.Content = [{_: ' al\nma ', $: {state: 'final'}}];
       expect(formatTarget(target, 'apple.')).to.deep.eq([{_: 'al ma.', $: {state: 'final'}}]);
@@ -121,6 +137,14 @@ describe('translator', () => {
       const base = xliff(['Save the file', 'Fájl mentése']);
       expect(targets(mergeTranslations(source, base))).to.deep.eq([['Fájl mentése.']]);
       expect(targets(mergeTranslations(source, base, {formatOutput: false}))).to.deep.eq([['Save\n  the   file.']]);
+    });
+
+    it('gives the same result when merging its own output again', () => {
+      const source = xliff([' Statistic: '], ['Copy '], ['Save']);
+      const base = xliff(['Statistic:', 'Statisztika:'], ['Save ', ' Mentés ']);
+      const once = mergeTranslations(source, base);
+      expect(targets(once)).to.deep.eq([[' Statisztika: '], ['Copy '], ['Mentés']]);
+      expect(targets(mergeTranslations(source, once))).to.deep.eq(targets(once));
     });
 
     it('ignores base units without a target', () => {
@@ -185,6 +209,74 @@ describe('translator', () => {
     expect(extractUntranslated(translated, 'en', false)).to.deep.eq([
       {source: 'pear', target: 'pear', lang: 'en'}
     ]);
+  });
+
+  describe('placeholders', () => {
+    const asset = (name: string): string => path.join(__dirname, 'assets', name);
+    let source: XLIFF.Root;
+    let existing: XLIFF.Root;
+    // unit id -> written <target> line
+    let written: Map<string, string>;
+
+    before(async () => {
+      source = await loadXml(asset('placeholders.source.xlf'), silent);
+      existing = await loadXml(asset('placeholders.hu.xlf'), silent);
+      const xml = toXml(mergeTranslations(source, existing));
+      written = new Map([...xml.matchAll(/<trans-unit id="([^"]+)"[\s\S]*?(<target>[\s\S]*?<\/target>)/g)]
+        .map(m => [m[1], m[2]]));
+    });
+
+    it('keeps <source>/<target> content as inner XML', () => {
+      expect(getText(getTransUnits(existing)[0].source))
+        .to.eq('Deleted <x id="PH" equiv-text="n"/> photos from <x id="PH_1" equiv-text="dir"/>.');
+    });
+
+    it('matches placeholders by id, ignoring other attributes and whitespace', () => {
+      expect(sourceEqual('Deleted <x id="PH" equiv-text="n"/> photos', 'Deleted  <x  id="PH"/>\n photos')).to.be.true;
+      expect(sourceEqual('Deleted <x id="PH"/> photos', 'Deleted <x id="PH_1"/> photos')).to.be.false;
+      expect(sourceEqual('Deleted <x id="PH"/> photos', 'Deleted photos')).to.be.false;
+      expect(sourceEqual('Deleted <x id="PH"/>.', 'Deleted <x id="PH"/>', true)).to.be.true;
+    });
+
+    it('keeps the translation of a placeholder unit', () => {
+      expect(written.get('deleted'))
+        .to.eq('<target><x id="PH" equiv-text="n"/> fotó törölve innen: <x id="PH_1" equiv-text="dir"/>.</target>');
+      expect(written.get('debug')).to.eq('<target>Állítsd a <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>' +
+        'NODE_ENV<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/> értékét debug-ra.</target>');
+    });
+
+    it('keeps placeholder order of the target, also when it differs from the source', () => {
+      expect(written.get('moved')).to.eq('<target>A(z) <x id="PH_1"/> mappába áthelyezve: <x id="PH"/></target>');
+    });
+
+    it('does not reuse the translation of a changed text or placeholder id', () => {
+      expect(written.get('shared')).to.eq('<target>Shared <x id="PH"/> videos</target>');
+      expect(written.get('open')).to.eq('<target>Open <x id="PH_1"/></target>');
+    });
+
+    it('round-trips non-ASCII text and entities', () => {
+      expect(written.get('accents')).to.eq('<target>Árvíztűrő tükörfúrógép, ő és ű</target>');
+      // &#60; in the source is written the same way xml2js always wrote it
+      expect(written.get('entities')).to.eq('<target>Tom &amp; Jerry &lt;3 "mindig"</target>');
+    });
+
+    it('writes loaded files back unchanged', async () => {
+      for (const name of ['placeholders.hu.xlf', 'messages.hu.xlf']) {
+        const content = await fsp.readFile(asset(name), 'utf-8');
+        expect(toXml(await loadXml(asset(name), silent))).to.eq(content.trimEnd(), name);
+      }
+    });
+
+    it('formats placeholder targets without touching the placeholders', () => {
+      expect(formatTarget([' <x id="PH" equiv-text="a  b"/>\n fotó  '], 'Deleted <x id="PH"/>.'))
+        .to.deep.eq(['<x id="PH" equiv-text="a  b"/> fotó.']);
+    });
+
+    it('applies translation map entries with placeholders', () => {
+      const map = [{source: 'Open <x id="PH_1"/>', target: '<x id="PH_1"/> megnyitása & mentése', lang: 'hu'}];
+      const unit = getTransUnits(applyTranslationMap(mergeTranslations(source, existing), 'hu', map))[3];
+      expect(unit.target).to.deep.eq(['<x id="PH_1"/> megnyitása &amp; mentése']);
+    });
   });
 
 });

@@ -1,14 +1,14 @@
 // Shape of an XLIFF 1.2 file as parsed by xml2js (default options: every child element is an array)
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace XLIFF {
-  // Element with attributes or inline children (e.g. <x id="..."/>); `_` holds its text content
+  // Element with attributes; `_` holds its content
   export interface TextNode {
     '_': string;
     '$'?: Record<string, string>;
     [child: string]: unknown;
   }
 
-  // Content of a <source> or <target> element
+  // Content of a <source> or <target> element, kept as raw inner XML (e.g. 'Deleted <x id="PH"/> photos')
   export type Content = (string | TextNode)[];
 
   export interface ContextGroup {
