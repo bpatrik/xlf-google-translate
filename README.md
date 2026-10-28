@@ -21,6 +21,8 @@ trailing dot difference is ignored too.
 
 ## Usage
 
+Requires Node.js 18 or newer.
+
 ```bash
 npm install --save-dev xlf-google-translate
 ```
@@ -40,6 +42,24 @@ xlf-google-translate --extractOriginalOnly=true --source-lang="hu" --source-file
 In this mode only the JSON goes to stdout. Progress messages go to stderr.
 
 The command exits with a non-zero code when the configuration is invalid or a file cannot be read or written.
+
+### Methods
+
+| `method` | Behavior |
+| --- | --- |
+| `extend` (default) | Keeps existing translations. If the existing file has the same source more than once, the first translation wins. |
+| `extend-only` | Same as `extend`, but the last translation wins for duplicate sources. |
+| `rewrite` | Ignores the existing destination file; every target starts as the source text. |
+
+With both `extend` methods, a real translation always beats a duplicate whose target is still the source text.
+
+### Translating with an external tool (e.g. AI)
+
+1. Merge as usual so the destination files contain every unit.
+2. Extract the untranslated units of a language with `--extractOriginalOnly=true` (see above).
+3. Translate the `target` fields of the JSON list (keep `source` and `lang` as they are).
+4. Put the list into `translationMap` in `config.json` and run the merge again. The entries are applied on top
+   of the merged file of their `lang`.
 
 ### Configuration
 
@@ -82,6 +102,14 @@ await writeXml(merged, 'messages.hu.xlf');
 
 Importing the library has no side effects. Only the CLI loads `config.json`.
 
+## Placeholders
+
+The content of `<source>` and `<target>` is handled as inner XML, so placeholders and inline elements
+(e.g. `<x id="INTERPOLATION" equiv-text="{{ n }}"/>`) stay where they are in the text. When matching sources,
+placeholders are compared by element name and `id` only (`equiv-text` and other attributes may differ). A target
+can reorder the placeholders of its source. Translation map entries and extracted entries are inner XML too, so
+keep the `<x .../>` elements in your translations.
+
 ## Development
 
 ```bash
@@ -91,11 +119,3 @@ npm run lint
 npm run typecheck
 npm run build      # compiles src/ to dist/
 ```
-
-## Placeholders
-
-The content of `<source>` and `<target>` is handled as inner XML, so placeholders and inline elements
-(e.g. `<x id="INTERPOLATION" equiv-text="{{ n }}"/>`) stay where they are in the text. When matching sources,
-placeholders are compared by element name and `id` only (`equiv-text` and other attributes may differ). A target
-can reorder the placeholders of its source. Translation map entries and extracted entries are inner XML too, so
-keep the `<x .../>` elements in your translations.
